@@ -53,12 +53,78 @@ class _MyHomePageState extends State<MyHomePage> {
 
         title: Text(widget.title),
       ),
-      body: Center(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image:AssetImage("assets/images/background.jpeg") ,
+            fit: BoxFit.cover,
 
+          ),
+
+        ),
         child: Column(
 
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text(
+              'Find a gym,find your new body',
+              style: TextStyle(
+                  fontFamily: 'DancingScript',
+                  fontSize: 30,
+                  color: Colors.white),
+            ),
+            SizedBox(
+              height: 50.0,
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 45),
+              padding: EdgeInsets.all(10.0),
+              color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.search,
+                    color: Colors.grey,
+                    size: 25,
+                  ),
+                  SizedBox(
+                    width: 10.0,
+                  ),
+                  Text(
+                    'try Avcilar,pushdown,100 tl ...',
+                    style: TextStyle(color: Colors.grey, fontSize: 20),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 100.0,
+            ),
+            Text(
+              'Are you a gym owner?',
+              style: TextStyle(
+                  fontFamily: 'DancingScript',
+                  fontSize: 20,
+                  color: Colors.white),
+            ),
+            SizedBox(
+              height: 15.0,
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 150),
+              padding: EdgeInsets.all(10.0),
+              color: Colors.blue,
+              child: Row(
+                children: <Widget>[
+
+                  Text(
+                    'Start Here',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  )
+                ],
+              ),
+            ),
+
 
           ],
         ),
