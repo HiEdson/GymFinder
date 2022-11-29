@@ -11,20 +11,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'GymFinder',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+          appBarTheme: AppBarTheme(
+            color: const Color(0xFF151026),
+          )
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'GymFinder'),
     );
   }
 }
@@ -48,68 +41,139 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+
+
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
+
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image:AssetImage("assets/images/background.jpeg") ,
+            fit: BoxFit.cover,
+
+          ),
+
+        ),
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
+
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+            Text(
+              'Find a gym,find your new body',
+              style: TextStyle(
+                  fontFamily: 'DancingScript',
+                  fontSize: 30,
+                  color: Colors.white),
+            ),
+            SizedBox(
+              height: 50.0,
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 45),
+              padding: EdgeInsets.all(10.0),
+              color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.search,
+                    color: Colors.grey,
+                    size: 25,
+                  ),
+                  SizedBox(
+                    width: 10.0,
+                  ),
+                  Text(
+                    'try Avcilar,pushdown,100 tl ...',
+                    style: TextStyle(color: Colors.grey, fontSize: 20),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 100.0,
             ),
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+              'Are you a gym owner?',
+              style: TextStyle(
+                  fontFamily: 'DancingScript',
+                  fontSize: 20,
+                  color: Colors.white),
             ),
+            SizedBox(
+              height: 15.0,
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 150),
+              padding: EdgeInsets.all(10.0),
+
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              child: Row(
+                children: <Widget>[
+
+                  Text(
+                    'Start Here',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  )
+                ],
+              ),
+            ),
+
+
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+
+      drawer: Drawer(
+        // Add a ListView to the drawer. This ensures the user can scroll
+        // through the options in the drawer if there isn't enough vertical
+        // space to fit everything.
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                image: DecorationImage(image: AssetImage("assets/images/gym.jpg")),
+
+              ),
+
+              child: Text('')
+            ),
+            ListTile(
+              title: const Text('Register'),
+              onTap: () {
+
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Gym List '),
+              onTap: () {
+
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Add Gym'),
+              onTap: () {
+
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),// This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
