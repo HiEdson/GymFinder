@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './gymList.dart';
 
 void main() {
   runApp(const MyApp());
@@ -129,7 +130,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
 
-
           ],
         ),
       ),
@@ -158,10 +158,15 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             ListTile(
-              title: const Text('Gym List '),
+              title: const Text('Gym List'),
+          
               onTap: () {
-
-                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => gymList(),
+                  ),
+                );
+                // Navigator.pop(context);
               },
             ),
             ListTile(
