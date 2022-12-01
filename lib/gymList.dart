@@ -18,34 +18,32 @@ class gymListState extends State<gymList> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: Text("Furkan's navbar goes hire"),
-        ),
-        body: Container(
-          // resizeToAvoidBottomPadding: false 
-          padding: const EdgeInsets.only(),
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/images/background.jpeg"),
-              fit: BoxFit.fill,
+          appBar: AppBar(
+            title: Text("Furkan's navbar goes hire"),
+          ),
+          body: Container(
+            // resizeToAvoidBottomPadding: false
+            padding: const EdgeInsets.only(),
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/background.jpeg"),
+                fit: BoxFit.fill,
+              ),
             ),
-          ),
-          child: /* add child content here */
-              SizedBox(
-            width: 1000.0,
-            height: 1000.0,
-            child: MyCustomForm(),
-            // child: Row(
-            //   // children: const <Widget>[
-            //   //   ,
+            child: /* add child content here */
+                SizedBox(
+              width: 1000.0,
+              height: 1000.0,
+              child: MyCustomForm(),
+              // child: Row(
+              //   // children: const <Widget>[
+              //   //   ,
+              //   //   // const MyCustomForm(),
 
-            //   //   // const MyCustomForm(),
-
-            //   // ],
-            // )
-          ),
-        ),
-      ),
+              //   // ],
+              // )
+            ),
+          )),
     );
   }
 }
@@ -55,16 +53,17 @@ class MyCustomForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return 
+    SingleChildScrollView(
+    child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          alignment: Alignment.centerLeft,
-          width: 500,
-          child: Column(
-            
-            children: [
-              Padding(
+            alignment: Alignment.centerLeft,
+            width: 500,
+            child: Column(
+              children: [
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 16),
                   child: Column(children: const <Widget>[
                     TextField(
@@ -86,16 +85,24 @@ class MyCustomForm extends StatelessWidget {
                     ),
                   ]),
                 ),
+
                 //it will be mapped
-            gymComp('Avcilar Gym Club'),
-            ],
-          )
-        )
+                gymComp('Avcilar Gym Club'),
+                gymComp('Avcilar Gym Club'),
+                gymComp('Avcilar Gym Club'),
+                gymComp('Avcilar Gym Club'),
+                gymComp('Avcilar Gym Club'),
+                gymComp('Avcilar Gym Club'),
+                gymComp('Avcilar Gym Club'),
+                gymComp('Avcilar Gym Club'),
+                gymComp('Avcilar Gym Club'),
+                gymComp('Avcilar Gym Club'),
+                gymComp('Avcilar Gym Club'),
+                gymComp('Avcilar Gym Club'),
+                gymComp('Avcilar Gym Club')
+              ],
+            ))
       ],
-    );
+    ));
   }
 }
-
-
-
-
