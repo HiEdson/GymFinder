@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymfinder/main.dart';
+import './gymComponent.dart';
 
 void main() {
   runApp(gymList());
@@ -21,6 +22,7 @@ class gymListState extends State<gymList> {
           title: Text("Furkan's navbar goes hire"),
         ),
         body: Container(
+          // resizeToAvoidBottomPadding: false 
           padding: const EdgeInsets.only(),
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -59,32 +61,41 @@ class MyCustomForm extends StatelessWidget {
         Container(
           alignment: Alignment.centerLeft,
           width: 500,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 16),
-            child: Column(children: const <Widget> [
-              TextField(
-                decoration: InputDecoration(
-                  icon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(45)),
-                  ),
-                  hintText: 'Try Avcilar, bench press, 100tl',
-                  filled: true, //<-- SEE HERE
-                  fillColor: Colors.white,
-                  // suffixIcon: Align(
-                  //   widthFactor: 1.0,
-                  //   heightFactor: 1.0,
-                  //   child: Icon(
-                  //   Icons.search,
-                  // ),)
-
+          child: Column(
+            
+            children: [
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 16),
+                  child: Column(children: const <Widget>[
+                    TextField(
+                      decoration: InputDecoration(
+                        icon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(45)),
+                        ),
+                        hintText: 'Try Avcilar, bench press, 100tl',
+                        filled: true, //<-- SEE HERE
+                        fillColor: Colors.white,
+                        // suffixIcon: Align(
+                        //   widthFactor: 1.0,
+                        //   heightFactor: 1.0,
+                        //   child: Icon(
+                        //   Icons.search,
+                        // ),)
+                      ),
+                    ),
+                  ]),
                 ),
-              ),
-              // const Icon(Icons.search),
-            ]),
-          ),
+                //it will be mapped
+            gymComp('Avcilar Gym Club'),
+            ],
+          )
         )
       ],
     );
   }
 }
+
+
+
+
