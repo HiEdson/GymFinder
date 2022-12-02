@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gymfinder/screens/register_screen.dart';
 
 import '../gym_list.dart';
+import '../screens/new_gym_screen.dart';
 
 class PrimaryDrawer extends StatefulWidget {
   @override
