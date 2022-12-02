@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymfinder/components/add_images.dart';
 
 class NewGymScreen extends StatefulWidget {
   @override
@@ -88,10 +89,26 @@ class _NewGymScreenState extends State<NewGymScreen> {
                                       email = value;
                                     })),
                           ),
-                          IconButton(onPressed: () => {}, icon: Icon(Icons.add))
+                          ElevatedButton(
+                            onPressed: () => {},
+                            style:
+                                ElevatedButton.styleFrom(shape: CircleBorder()),
+                            child: Icon(Icons.add),
+                          )
                         ],
                       ),
                     ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text("Images",
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(color: Colors.black, blurRadius: 10)
+                              ])),
+                    ),
+                    AddImages(),
                     ElevatedButton(
                       onPressed: () => {},
                       style: ElevatedButton.styleFrom(
