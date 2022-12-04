@@ -26,7 +26,16 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(
+          widget.title,
+          style: TextStyle(
+            fontSize: 30.0,
+          ),
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.grey,
+          size: 55.0,
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -46,27 +55,23 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.white),
             ),
             SizedBox(
-              height: 50.0,
+              height: 15.0,
             ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 45),
-              padding: EdgeInsets.all(10.0),
-              color: Colors.white,
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.search,
-                    color: Colors.grey,
-                    size: 25,
-                  ),
-                  SizedBox(
-                    width: 10.0,
-                  ),
-                  Text(
-                    'try Avcilar,pushdown,100 tl ...',
-                    style: TextStyle(color: Colors.grey, fontSize: 20),
-                  )
-                ],
+            TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(45)),
+                ),
+                hintText: 'Try Avcilar, bench press, 100tl',
+                filled: true, //<-- SEE HERE
+                fillColor: Colors.white,
+                icon: Icon(Icons.search),
+                // suffixIcon: Align(
+                //   widthFactor: 1.0,
+                //   heightFactor: 1.0,
+                //   child: Icon(
+                //   Icons.search,
+                // ),)
               ),
             ),
             SizedBox(
@@ -82,27 +87,21 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: 15.0,
             ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 150),
-              padding: EdgeInsets.all(10.0),
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.all(Radius.circular(20)),
+            ElevatedButton(
+              onPressed: () => {},
+              style: ElevatedButton.styleFrom(
+                textStyle: TextStyle(fontSize: 24),
+                minimumSize: Size(150, 35),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
               ),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    'Start Here',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  )
-                ],
-              ),
-            ),
+              child: Text("Start Here"),
+            )
           ],
         ),
       ),
 
-      drawer:
+      endDrawer:
           PrimaryDrawer(), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
