@@ -25,7 +25,7 @@ class GymComp extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.centerLeft,  
               child: Container(
                   margin: const EdgeInsets.only(top: 20.0),
                   // color: Colors.red,

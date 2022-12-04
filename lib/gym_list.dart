@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'components/gym_component.dart';
-
-// void main() {
-//   runApp(GymList());
-// }
+import './single_gym.dart';
 
 class GymList extends StatefulWidget {
   @override
@@ -30,7 +27,8 @@ class _GymListState extends State<GymList> {
           ),
           child: /* add child content here */
               SizedBox(
-            width: 1000.0,
+                width: MediaQuery.of(context).size.width * 1,
+            // width: 1000.0,
             height: 1000.0,
             child: MyCustomForm(),
             // child: Row(
@@ -69,7 +67,7 @@ class MyCustomForm extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(45)),
                         ),
                         hintText: 'Try Avcilar, bench press, 100tl',
-                        filled: true, //<-- SEE HERE
+                        filled: true,
                         fillColor: Colors.white,
                         // suffixIcon: Align(
                         //   widthFactor: 1.0,
@@ -83,19 +81,28 @@ class MyCustomForm extends StatelessWidget {
                 ),
 
                 //it will be mapped
-                GymComp('Avcilar Gym Club'),
-                GymComp('Avcilar Gym Club'),
-                GymComp('Avcilar Gym Club'),
-                GymComp('Avcilar Gym Club'),
-                GymComp('Avcilar Gym Club'),
-                GymComp('Avcilar Gym Club'),
-                GymComp('Avcilar Gym Club'),
-                GymComp('Avcilar Gym Club'),
-                GymComp('Avcilar Gym Club'),
-                GymComp('Avcilar Gym Club'),
-                GymComp('Avcilar Gym Club'),
-                GymComp('Avcilar Gym Club'),
-                GymComp('Avcilar Gym Club')
+                //test the gest detect with the first element
+                GestureDetector(
+                  onTap: (){
+                    Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => singleGym("Avcilar Gym Club1")));
+                  },
+                  child: GymComp('Avcilar Gym Club1'),
+                ),
+
+                GymComp('Avcilar Gym Club1'),
+                GymComp('Avcilar Gym Club2'),
+                GymComp('Avcilar Gym Club3'),
+                GymComp('Avcilar Gym Club4'),
+                GymComp('Avcilar Gym Club5'),
+                GymComp('Avcilar Gym Club5'),
+                GymComp('Avcilar Gym Club6'),
+                GymComp('Avcilar Gym Club7'),
+                GymComp('Avcilar Gym Club8'),
+                GymComp('Avcilar Gym Club9'),
+                GymComp('Avcilar Gym Club10'),
+                GymComp('Avcilar Gym Club11'),
+                GymComp('Avcilar Gym Club12')
               ],
             ))
       ],
