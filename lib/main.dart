@@ -15,7 +15,8 @@ class MyApp extends StatelessWidget {
       title: 'GymFinder',
       theme: ThemeData(
           appBarTheme: AppBarTheme(
-        color: const Color(0xFF151026),
+        // color: const Color(0xFF151026),
+        color: Colors.black,
       )),
       home: const HomePage(title: 'GymFinder'),
     );
