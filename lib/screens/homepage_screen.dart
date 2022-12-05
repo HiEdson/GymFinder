@@ -38,13 +38,15 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Container(
+        constraints: BoxConstraints.expand(),
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/background.jpeg"),
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
+        child: SingleChildScrollView(
+            child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
@@ -66,6 +68,7 @@ class _HomePageState extends State<HomePage> {
                 filled: true, //<-- SEE HERE
                 fillColor: Colors.white,
                 icon: Icon(Icons.search),
+
                 // suffixIcon: Align(
                 //   widthFactor: 1.0,
                 //   heightFactor: 1.0,
@@ -98,7 +101,7 @@ class _HomePageState extends State<HomePage> {
               child: Text("Start Here"),
             )
           ],
-        ),
+        )),
       ),
 
       endDrawer:

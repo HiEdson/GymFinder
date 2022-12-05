@@ -3,7 +3,6 @@ import 'components/gym_component.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import './components/rating.dart';
 
-
 class singleGym extends StatefulWidget {
   final String gymInfo;
   const singleGym(this.gymInfo);
@@ -18,14 +17,12 @@ class _singleGymState extends State<singleGym> {
   @override
   // double rating = 0;
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text("Furkan's navbar goes hire"),
         ),
         body: Container(
-          height: double.infinity,
-          width: double.infinity,
+          constraints: BoxConstraints.expand(),
           padding: const EdgeInsets.only(),
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -52,16 +49,21 @@ class _singleGymState extends State<singleGym> {
               ),
               Container(
                   // padding: const EdgeInsets.only(),
+                  height: MediaQuery.of(context).size.height / 3,
+                  width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.only(left: 25.0, right: 25.0),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.white, width: 7),
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
                   child: FittedBox(
-                    child: Image.asset('assets/images/background.jpeg'),
                     fit: BoxFit.fill,
+                    alignment: Alignment.center,
+                    child: Image.asset('assets/images/background.jpeg'),
                   )),
               Container(
+                  height: MediaQuery.of(context).size.height / 3,
+                  width: MediaQuery.of(context).size.width,
                   // padding: const EdgeInsets.only(),
                   margin:
                       const EdgeInsets.only(left: 25.0, right: 25.0, top: 40.0),
@@ -70,8 +72,9 @@ class _singleGymState extends State<singleGym> {
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
                   child: FittedBox(
-                    child: Image.asset('assets/images/map.jpg'),
                     fit: BoxFit.fill,
+                    alignment: Alignment.center,
+                    child: Image.asset('assets/images/map.jpg'),
                   )),
               Center(
                   child: Column(
@@ -86,7 +89,7 @@ class _singleGymState extends State<singleGym> {
                             color: Colors.black),
                         textAlign: TextAlign.center,
                       )),
-                      // rating()
+                  // rating()
                   RatingBar.builder(
                     initialRating: 1,
                     minRating: 1,
@@ -106,7 +109,6 @@ class _singleGymState extends State<singleGym> {
               ))
             ],
           )),
-        ))
-    );
+        ));
   }
 }

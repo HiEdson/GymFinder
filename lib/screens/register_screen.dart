@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../components/dark_image.dart';
+
 class RegisterScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -13,14 +15,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(title: Text("GymFinder")),
         body: Stack(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage("assets/images/background.jpeg"),
-                    fit: BoxFit.cover),
+            DarkImage(
+              alpha: 80,
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assets/images/background.jpeg"),
+                      fit: BoxFit.cover),
+                ),
               ),
             ),
             Column(
