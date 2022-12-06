@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymfinder/dialogs/dialog.dart';
 
 import '../components/dark_image.dart';
 
@@ -77,7 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ]),
                 ),
                 ElevatedButton(
-                  onPressed: () => {},
+                  onPressed: () => _showDialog(context),
                   style: ElevatedButton.styleFrom(
                     textStyle: TextStyle(fontSize: 24),
                     minimumSize: Size(200, 60),
@@ -91,4 +92,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ],
         ));
   }
+}
+
+void _showDialog(BuildContext context) {
+  showDialog(context: context, builder: (context) => MyDialog());
 }

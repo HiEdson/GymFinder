@@ -24,14 +24,12 @@ class _NewGymScreenState extends State<NewGymScreen> {
                     fit: BoxFit.cover),
               ),
             ),
-            Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
+            CustomScrollView(
+              slivers: [
+                SliverList(
+                  delegate: SliverChildListDelegate([
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
                         "Add New Gym",
                         style: TextStyle(
@@ -107,20 +105,23 @@ class _NewGymScreenState extends State<NewGymScreen> {
                               shadows: [
                                 Shadow(color: Colors.black, blurRadius: 10)
                               ])),
-                    ),
-                    AddImages(),
-                    ElevatedButton(
-                      onPressed: () => {},
-                      style: ElevatedButton.styleFrom(
-                        textStyle: TextStyle(fontSize: 24),
-                        minimumSize: Size(200, 60),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                      ),
-                      child: Text("Add"),
                     )
-                  ],
+                  ]),
+                ),
+                AddImages(),
+                SliverToBoxAdapter(
+                    child: ElevatedButton(
+                  onPressed: () => {},
+                  style: ElevatedButton.styleFrom(
+                    textStyle: TextStyle(fontSize: 24),
+                    minimumSize: Size(200, 60),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                  ),
+                  child: Text("Add"),
                 ))
+              ],
+            )
           ],
         ));
   }
