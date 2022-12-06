@@ -32,6 +32,7 @@ class _PrimaryDrawerState extends State<PrimaryDrawer> {
         ListTile(
           title: const Text('Gym List'),
           onTap: () {
+            Navigator.pop(context);
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => GymList(),

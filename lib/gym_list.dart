@@ -27,7 +27,7 @@ class _GymListState extends State<GymList> {
           ),
           child: /* add child content here */
               SizedBox(
-                width: MediaQuery.of(context).size.width * 1,
+            width: MediaQuery.of(context).size.width * 1,
             // width: 1000.0,
             height: 1000.0,
             child: MyCustomForm(),
@@ -83,9 +83,9 @@ class MyCustomForm extends StatelessWidget {
                 //it will be mapped
                 //test the gest detect with the first element
                 GestureDetector(
-                  onTap: (){
-                    Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => singleGym("Avcilar Gym Club1")));
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => singleGym("Avcilar Gym Club1")));
                   },
                   child: GymComp('Avcilar Gym Club1'),
                 ),
