@@ -13,6 +13,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   var email = "";
   var password = "";
+  bool registering = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,15 +79,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ]),
                 ),
                 ElevatedButton(
-                  onPressed: () => _showDialog(context),
-                  style: ElevatedButton.styleFrom(
-                    textStyle: TextStyle(fontSize: 24),
-                    minimumSize: Size(200, 60),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                  ),
-                  child: Text("Welcome"),
-                )
+                    onPressed: registering
+                        ? null
+                        : () async {
+                            setState(() {
+                              registering = true;
+                            });
+                            Future.delayed(Duration(seconds: 3), () {
+                              setState(() {
+                                registering = false;
+                              });
+                            });
+                          },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(100, 40),
+                      disabledBackgroundColor: Colors.grey,
+                      textStyle: TextStyle(fontSize: 24),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                    ),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      Text("Register"),
+                      SizedBox(width: 20),
+                      if (registering) CircularProgressIndicator()
+                    ]))
               ],
             )
           ],
