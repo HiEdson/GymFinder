@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gymfinder/drawers/PrimaryDrawer.dart';
-
 import '../gym_list.dart';
 
 class HomePage extends StatefulWidget {
