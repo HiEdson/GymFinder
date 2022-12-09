@@ -1,10 +1,11 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:gymfinder/components/select_location_map.dart';
 import 'package:gymfinder/utils/city.dart';
 
 class SelectLocation extends StatefulWidget {
   final Function(String) onAddressChange;
-  SelectLocation({required this.onAddressChange});
+  const SelectLocation({required this.onAddressChange});
   @override
   State<StatefulWidget> createState() => _SelectLocationState();
 }
@@ -44,7 +45,7 @@ class _SelectLocationState extends State<SelectLocation> {
                 });
               },
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 10),
             Text("District"),
             DropdownSearch<String>(
               items: getProvinceDistricts(province),
@@ -55,7 +56,7 @@ class _SelectLocationState extends State<SelectLocation> {
                 });
               },
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 10),
             Text("Mahalle"),
             DropdownSearch<String>(
               items: getDistrictMahalle(province, district),
@@ -66,7 +67,8 @@ class _SelectLocationState extends State<SelectLocation> {
                 });
               },
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 10),
+            Container(height: 200, child: SelectLocationMap())
           ],
         ));
   }
