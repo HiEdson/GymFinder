@@ -14,7 +14,17 @@ class _GymListState extends State<GymList> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Furkan's navbar goes hire"),
+          title: Text(
+            "GymFinder",
+            style: TextStyle(
+              fontSize: 30.0,
+            ),
+          ),
+          //have to add the hamburger here, i cant find it
+          // iconTheme: IconThemeData(
+          //   color: Colors.grey,
+          //   size: 55.0,
+          // ),
         ),
         body: Container(
           // resizeToAvoidBottomPadding: false
@@ -25,19 +35,11 @@ class _GymListState extends State<GymList> {
               fit: BoxFit.fill,
             ),
           ),
-          child: /* add child content here */
-              SizedBox(
+          child: SizedBox(
             width: MediaQuery.of(context).size.width * 1,
             // width: 1000.0,
             height: 1000.0,
             child: MyCustomForm(),
-            // child: Row(
-            //   // children: const <Widget>[
-            //   //   ,
-            //   //   // const MyCustomForm(),
-
-            //   // ],
-            // )
           ),
         ));
   }
@@ -45,9 +47,17 @@ class _GymListState extends State<GymList> {
 
 class MyCustomForm extends StatelessWidget {
   const MyCustomForm({super.key});
-
   @override
   Widget build(BuildContext context) {
+    const gymList = [
+      'Avcilar Gym Club1',
+      'Avcilar Gym Club2',
+      'Avcilar Gym Club3',
+      'Avcilar Gym Club4',
+      'Avcilar Gym Club5',
+      'Avcilar Gym Club6'
+    ];
+
     return SingleChildScrollView(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,27 +92,29 @@ class MyCustomForm extends StatelessWidget {
 
                 //it will be mapped
                 //test the gest detect with the first element
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => singleGym("Avcilar Gym Club1")));
-                  },
-                  child: GymComp('Avcilar Gym Club1'),
-                ),
-
-                GymComp('Avcilar Gym Club1'),
-                GymComp('Avcilar Gym Club2'),
-                GymComp('Avcilar Gym Club3'),
-                GymComp('Avcilar Gym Club4'),
-                GymComp('Avcilar Gym Club5'),
-                GymComp('Avcilar Gym Club5'),
-                GymComp('Avcilar Gym Club6'),
-                GymComp('Avcilar Gym Club7'),
-                GymComp('Avcilar Gym Club8'),
-                GymComp('Avcilar Gym Club9'),
-                GymComp('Avcilar Gym Club10'),
-                GymComp('Avcilar Gym Club11'),
-                GymComp('Avcilar Gym Club12')
+                ...(gymList).map((g) {
+                  //(gymList as List<String>)
+                  return (GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => singleGym(g)));
+                    },
+                    child: GymComp(g),
+                  ));
+                }).toList(),
+                // GymComp('Avcilar Gym Club1'),
+                // GymComp('Avcilar Gym Club2'),
+                // GymComp('Avcilar Gym Club3'),
+                // GymComp('Avcilar Gym Club4'),
+                // GymComp('Avcilar Gym Club5'),
+                // GymComp('Avcilar Gym Club5'),
+                // GymComp('Avcilar Gym Club6'),
+                // GymComp('Avcilar Gym Club7'),
+                // GymComp('Avcilar Gym Club8'),
+                // GymComp('Avcilar Gym Club9'),
+                // GymComp('Avcilar Gym Club10'),
+                // GymComp('Avcilar Gym Club11'),
+                // GymComp('Avcilar Gym Club12')
               ],
             ))
       ],
