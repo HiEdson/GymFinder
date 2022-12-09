@@ -4,6 +4,8 @@
         android:label="gymfinder"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"  
+             android:value="AIzaSyCLv5PDaDRaLFOc6CZbHUcELRoIXPDQZSo"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
