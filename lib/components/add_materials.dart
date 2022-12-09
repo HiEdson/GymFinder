@@ -1,5 +1,5 @@
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class AddMaterials extends StatefulWidget {
   @override
@@ -7,7 +7,8 @@ class AddMaterials extends StatefulWidget {
 }
 
 class _AddMaterialsState extends State<AddMaterials> {
-  final List<String> materials = [];
+  final List<String> selectedMaterials = [];
+  final List<String> materials = ["bar", "run", "ball", "dumbbell", "rope"];
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -20,28 +21,46 @@ class _AddMaterialsState extends State<AddMaterials> {
               color: Colors.white,
               shadows: [Shadow(color: Colors.black, blurRadius: 10)]),
         ),
-        Wrap(children: [
-          Chip(label: Text("Duh"), onDeleted: () {}),
+        Wrap(spacing: 10, children: [
+          for (var material in selectedMaterials)
+            Chip(
+                label: Text(material),
+                onDeleted: () {
+                  setState(() {
+                    selectedMaterials.remove(material);
+                  });
+                }),
           ElevatedButton(
-            onPressed: () => {},
+            onPressed: () async {
+              _getDropDown(context, materials, selectedMaterials, (values) {
+                selectedMaterials.clear();
+                setState(() {
+                  selectedMaterials.addAll(values);
+                });
+              });
+            },
             style: ElevatedButton.styleFrom(shape: CircleBorder()),
             child: Icon(Icons.add),
           ),
-          _getDropDown()
         ])
       ],
     );
   }
 }
 
-Widget _getDropDown() {
-  return DropdownSearch<String>(
-    items: ["Emma", "Leon", "azza"],
-    dropdownDecoratorProps: DropDownDecoratorProps(
-        dropdownSearchDecoration: InputDecoration(
-            suffixIcon: Icon(Icons.add),
-            suffix: Icon(Icons.add),
-            fillColor: Colors.yellow,
-            filled: true)),
-  );
+void _getDropDown(BuildContext context, List<String> materials,
+    List<String> initial, Function(List<String>) onConfirm) async {
+  await showDialog(
+      context: context,
+      builder: (context) {
+        return MultiSelectDialog(
+          title: Text("Add Materials"),
+          searchable: true,
+          items: [
+            for (var material in materials) MultiSelectItem(material, material)
+          ],
+          initialValue: initial,
+          onConfirm: onConfirm,
+        );
+      });
 }
