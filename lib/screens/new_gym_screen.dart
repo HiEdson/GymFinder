@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gymfinder/components/add_images.dart';
 import 'package:gymfinder/components/add_materials.dart';
+import 'package:gymfinder/dialogs/select_location.dart';
 
 import '../components/dark_image.dart';
 
@@ -14,6 +15,7 @@ class NewGymScreen extends StatefulWidget {
 class _NewGymScreenState extends State<NewGymScreen> {
   var email = "";
   var password = "";
+  var address = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,6 +64,31 @@ class _NewGymScreenState extends State<NewGymScreen> {
                         onChanged: (value) => setState(() {
                           email = value;
                         }),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => SelectLocation(
+                                      onAddressChange: (String value) {
+                                    setState(() {
+                                      address = value;
+                                    });
+                                  }));
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          child: Text(address),
+                        ),
                       ),
                     ),
                     Padding(
