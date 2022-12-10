@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gymfinder/components/add_images.dart';
+import 'package:gymfinder/components/add_materials.dart';
+import 'package:gymfinder/dialogs/select_location.dart';
+
+import '../components/dark_image.dart';
 
 class NewGymScreen extends StatefulWidget {
   @override
@@ -11,27 +15,31 @@ class NewGymScreen extends StatefulWidget {
 class _NewGymScreenState extends State<NewGymScreen> {
   var email = "";
   var password = "";
+  var address = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text("GymFinder")),
         body: Stack(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage("assets/images/background.jpeg"),
-                    fit: BoxFit.cover),
+            DarkImage(
+              alpha: 80,
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assets/images/background.jpeg"),
+                      fit: BoxFit.cover),
+                ),
               ),
             ),
-            Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
+            CustomScrollView(
+              slivers: [
+                SliverList(
+                  delegate: SliverChildListDelegate([
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
                         "Add New Gym",
                         style: TextStyle(
@@ -43,7 +51,8 @@ class _NewGymScreenState extends State<NewGymScreen> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(bottom: 10),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       child: TextField(
                         decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -58,7 +67,33 @@ class _NewGymScreenState extends State<NewGymScreen> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(bottom: 10),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => SelectLocation(
+                                      onAddressChange: (String value) {
+                                    setState(() {
+                                      address = value;
+                                    });
+                                  }));
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          child: Text(address),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       child: TextField(
                         decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -73,54 +108,46 @@ class _NewGymScreenState extends State<NewGymScreen> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(bottom: 10),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10))),
-                                    hintText: "Materials",
-                                    fillColor: Colors.white,
-                                    filled: true),
-                                onChanged: (value) => setState(() {
-                                      email = value;
-                                    })),
-                          ),
-                          ElevatedButton(
-                            onPressed: () => {},
-                            style:
-                                ElevatedButton.styleFrom(shape: CircleBorder()),
-                            child: Icon(Icons.add),
-                          )
-                        ],
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        child: AddMaterials()),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      child: Text(
+                        "Images",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(color: Colors.black, blurRadius: 10)
+                            ]),
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text("Images",
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(color: Colors.black, blurRadius: 10)
-                              ])),
-                    ),
-                    AddImages(),
-                    ElevatedButton(
-                      onPressed: () => {},
-                      style: ElevatedButton.styleFrom(
-                        textStyle: TextStyle(fontSize: 24),
-                        minimumSize: Size(200, 60),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                      ),
-                      child: Text("Add"),
                     )
-                  ],
-                ))
+                  ]),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  sliver: AddImages(),
+                ),
+                SliverToBoxAdapter(
+                  child: Container(
+                      alignment: Alignment.center,
+                      child: ElevatedButton(
+                        onPressed: () => {},
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 30),
+                          textStyle: TextStyle(fontSize: 24),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                        ),
+                        child: Text("Add"),
+                      )),
+                ),
+                SliverToBoxAdapter(child: SizedBox(height: 10))
+              ],
+            )
           ],
         ));
   }

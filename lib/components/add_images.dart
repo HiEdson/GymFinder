@@ -16,13 +16,21 @@ class _AddImagesState extends State<AddImages> {
   Uint8List? bytes;
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: GridView.count(
+    return SliverGrid.count(
       crossAxisSpacing: 10,
       mainAxisSpacing: 10,
       crossAxisCount: 2,
       children: [
-        for (var image in images) Image.memory(image, fit: BoxFit.cover),
+        for (var index = 0; index < images.length; ++index)
+          _MyImage(
+              key: ValueKey(images[index].hashCode),
+              bytes: images[index],
+              index: index,
+              onDelete: () {
+                setState(() {
+                  images.removeAt(index);
+                });
+              }),
         Container(
           color: Colors.white,
           child: Center(
@@ -41,34 +49,32 @@ class _AddImagesState extends State<AddImages> {
           )),
         ),
       ],
-    ));
+    );
   }
 }
 
+class _MyImage extends StatelessWidget {
+  final Uint8List bytes;
+  final int index;
+  final Function onDelete;
+  const _MyImage(
+      {super.key,
+      required this.bytes,
+      required this.index,
+      required this.onDelete});
 
-
-//   Widget build(BuildContext context) {
-//     return Container(
-//         child: Column(
-//       children: [
-//         ElevatedButton(
-//           onPressed: () async {
-//             XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-//             print(image?.path);
-//             final b = await image?.readAsBytes();
-//             setState(() {
-//               bytes = b;
-//             });
-//           },
-//           child: Text("add"),
-//         ),
-//         if (bytes != null)
-//           SizedBox(
-//             width: 100,
-//             height: 100,
-//             child: Image.memory(bytes!, fit: BoxFit.cover),
-//           )
-//       ],
-//     ));
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Image.memory(bytes, fit: BoxFit.cover),
+        Positioned(
+            right: 0,
+            top: 0,
+            child: IconButton(
+                onPressed: () => onDelete(), icon: Icon(Icons.cancel)))
+      ],
+    );
+  }
+}
