@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymfinder/dialogs/dialog.dart';
+import 'package:gymfinder/utils/user.dart';
 
 import '../components/dark_image.dart';
 
@@ -104,6 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: registering
                       ? null
                       : () async {
+                          addUser();
                           setState(() {
                             registering = true;
                           });

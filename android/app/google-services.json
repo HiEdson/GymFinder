@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "997545743080",
+    "project_id": "gymfinder-3c00c",
+    "storage_bucket": "gymfinder-3c00c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:997545743080:android:ac93fbab4018ec480eaf5d",
+        "android_client_info": {
+          "package_name": "com.example.gymfinder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "997545743080-q1ktpoa2k3tmit65l1ie8s19mdkbf1nt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnv9W_3ndvi9IfJGFSX1946GmIinNPowE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "997545743080-q1ktpoa2k3tmit65l1ie8s19mdkbf1nt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "997545743080-duv60lhcf1ohaagmelf621abm1g9hg2p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.gymfinder"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
