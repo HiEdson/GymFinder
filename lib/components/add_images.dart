@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gymfinder/models/gym_save_model.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class AddImages extends StatefulWidget {
   @override
@@ -12,8 +13,7 @@ class AddImages extends StatefulWidget {
 
 class _AddImagesState extends State<AddImages> {
   final _picker = ImagePicker();
-  final List<Uint8List> images = [];
-  Uint8List? bytes;
+  final List<_Image> images = [];
   @override
   Widget build(BuildContext context) {
     return SliverGrid.count(
@@ -24,7 +24,7 @@ class _AddImagesState extends State<AddImages> {
         for (var index = 0; index < images.length; ++index)
           _MyImage(
               key: ValueKey(images[index].hashCode),
-              bytes: images[index],
+              image: images[index],
               index: index,
               onDelete: () {
                 setState(() {
@@ -36,12 +36,22 @@ class _AddImagesState extends State<AddImages> {
           child: Center(
               child: ElevatedButton(
             onPressed: () async {
+              print("here");
               XFile? image =
                   await _picker.pickImage(source: ImageSource.gallery);
+              // image
               var bytes = await image?.readAsBytes();
+              if (bytes == null) {
+                print("null");
+                return;
+              }
+              var name = image?.name;
+              print("path ${image?.path}# name ${name}");
               setState(() {
-                if (bytes != null) images.add(bytes);
+                images.add(_Image(name!, bytes));
               });
+              Provider.of<NewGymModel>(context, listen: false)
+                  .addImage(name!, bytes);
             },
             style: ElevatedButton.styleFrom(
                 shape: CircleBorder(), backgroundColor: Colors.grey),
@@ -54,12 +64,12 @@ class _AddImagesState extends State<AddImages> {
 }
 
 class _MyImage extends StatelessWidget {
-  final Uint8List bytes;
+  final _Image image;
   final int index;
   final Function onDelete;
   const _MyImage(
       {super.key,
-      required this.bytes,
+      required this.image,
       required this.index,
       required this.onDelete});
 
@@ -68,7 +78,7 @@ class _MyImage extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Image.memory(bytes, fit: BoxFit.cover),
+        Image.memory(key: ValueKey(image.name), image.bytes, fit: BoxFit.cover),
         Positioned(
             right: 0,
             top: 0,
@@ -77,4 +87,11 @@ class _MyImage extends StatelessWidget {
       ],
     );
   }
+}
+
+class _Image {
+  final String name;
+  final Uint8List bytes;
+
+  _Image(this.name, this.bytes);
 }

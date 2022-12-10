@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymfinder/utils/db.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class AddMaterials extends StatefulWidget {
@@ -8,7 +9,8 @@ class AddMaterials extends StatefulWidget {
 
 class _AddMaterialsState extends State<AddMaterials> {
   final List<String> selectedMaterials = [];
-  final List<String> materials = ["bar", "run", "ball", "dumbbell", "rope"];
+  final Future<List<String>> materials = getMaterials();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -48,19 +50,29 @@ class _AddMaterialsState extends State<AddMaterials> {
   }
 }
 
-void _getDropDown(BuildContext context, List<String> materials,
+void _getDropDown(BuildContext context, Future<List<String>> future,
     List<String> initial, Function(List<String>) onConfirm) async {
   await showDialog(
       context: context,
       builder: (context) {
-        return MultiSelectDialog(
-          title: Text("Add Materials"),
-          searchable: true,
-          items: [
-            for (var material in materials) MultiSelectItem(material, material)
-          ],
-          initialValue: initial,
-          onConfirm: onConfirm,
-        );
+        return FutureBuilder(
+            future: future,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                var materials = snapshot.data ?? [];
+                return MultiSelectDialog(
+                  title: Text("Add Materials"),
+                  searchable: true,
+                  items: [
+                    for (var material in materials)
+                      MultiSelectItem(material, material)
+                  ],
+                  initialValue: initial,
+                  onConfirm: onConfirm,
+                );
+              } else {
+                return AlertDialog(title: Text("Loading"));
+              }
+            });
       });
 }
