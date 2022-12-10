@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymfinder/models/gym_save_model.dart';
 import 'package:gymfinder/models/user_model.dart';
 import 'package:gymfinder/screens/homepage_screen.dart';
 import 'package:provider/provider.dart';
@@ -11,8 +12,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => UserModel(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<UserModel>(create: (_) => UserModel()),
+        ChangeNotifierProvider<NewGymModel>(create: (_) => NewGymModel()),
+      ],
       child: const MyApp(),
     ),
   );
