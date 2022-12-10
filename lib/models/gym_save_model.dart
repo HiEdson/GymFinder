@@ -1,31 +1,34 @@
+import 'dart:convert';
 import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:gymfinder/utils/constants.dart';
 
 class NewGymModel extends ChangeNotifier {
   final Map<String, _Image> images = {};
-  final storageRef = FirebaseStorage.instance.ref();
-  final rng = Random();
 
   Future<void> addImage(String name, Uint8List bytes) async {
-    name = (rng.nextInt(1000) + 1).toString() +
-        name.replaceAll(RegExp(r'\W+'), "");
-    var imageRef = storageRef.child(name);
-    try {
-      await imageRef.putData(bytes);
-      var url = await imageRef.getDownloadURL();
-      images[name] = _Image(name, bytes, url);
-    } catch (e) {
-      print("error uploading");
-      print(e);
-    }
+    await uploadImage(name, bytes);
   }
 
   void removeImage(String name) {
-    name = (rng.nextInt(1000) + 1).toString() +
-        name.replaceAll(RegExp(r'\W+'), "");
     images.remove(name);
+  }
+}
+
+final storageRef = FirebaseStorage.instance.ref();
+Future<void> uploadImage(String name, Uint8List bytes) async {
+  try {
+    var doc = storageRef.child(name);
+    var task = await doc.putData(bytes);
+    var url = await doc.getDownloadURL();
+    print("result");
+    print(url);
+  } catch (e) {
+    print("error");
+    print(e);
   }
 }
 

@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCnv9W_3ndvi9IfJGFSX1946GmIinNPowE',
-    appId: '1:997545743080:android:ac93fbab4018ec480eaf5d',
-    messagingSenderId: '997545743080',
-    projectId: 'gymfinder-3c00c',
-    storageBucket: 'gymfinder-3c00c.appspot.com',
+    apiKey: 'AIzaSyBU075sqTPNrsALqHGlTOJOWR8a1nLx00s',
+    appId: '1:1086806669510:android:151fc32df35932156affc7',
+    messagingSenderId: '1086806669510',
+    projectId: 'gymupdated',
+    storageBucket: 'gymupdated.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBth2hH23a7VCfr1NQCqwXbS2Qc_3jkMeE',
-    appId: '1:997545743080:ios:07a78f09b78c5fa40eaf5d',
-    messagingSenderId: '997545743080',
-    projectId: 'gymfinder-3c00c',
-    storageBucket: 'gymfinder-3c00c.appspot.com',
-    iosClientId: '997545743080-duv60lhcf1ohaagmelf621abm1g9hg2p.apps.googleusercontent.com',
+    apiKey: 'AIzaSyCtCgFd8EBWJY1GFbt3yG_SJLkbU_EGNEo',
+    appId: '1:1086806669510:ios:7cb8c3dbc7a1afda6affc7',
+    messagingSenderId: '1086806669510',
+    projectId: 'gymupdated',
+    storageBucket: 'gymupdated.appspot.com',
+    iosClientId: '1086806669510-anc4qppqufebhadlr4bedbi7fqbucj6b.apps.googleusercontent.com',
     iosBundleId: 'com.example.gymfinder',
   );
 }
