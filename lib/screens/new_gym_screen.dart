@@ -19,6 +19,7 @@ class _NewGymScreenState extends State<NewGymScreen> {
   var name = "";
   List<String> materials = [];
   var address = Address();
+  bool saving = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +93,7 @@ class _NewGymScreenState extends State<NewGymScreen> {
                                   BorderRadius.all(Radius.circular(10))),
                           child: Text(address.province.length > 1
                               ? "${address.mahalle}/${address.district}, ${address.province}"
-                              : ""),
+                              : "Choose Loaction"),
                         ),
                       ),
                     ),
@@ -122,23 +123,34 @@ class _NewGymScreenState extends State<NewGymScreen> {
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   sliver: AddImages(),
                 ),
-                SliverToBoxAdapter(
-                  child: Container(
-                      alignment: Alignment.center,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          saveGym(name, materials, address, context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 30),
-                          textStyle: TextStyle(fontSize: 24),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                        ),
-                        child: Text("Add"),
-                      )),
-                ),
+                if (!saving)
+                  SliverToBoxAdapter(
+                    child: Container(
+                        alignment: Alignment.center,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            setState(() {
+                              saving = true;
+                            });
+                            await saveGym(name, materials, address, context);
+                            setState(() {
+                              saving = false;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 30),
+                            textStyle: TextStyle(fontSize: 24),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                          ),
+                          child: Text("Add"),
+                        )),
+                  ),
+                if (saving)
+                  SliverToBoxAdapter(
+                    child: SizedBox(child: CircularProgressIndicator()),
+                  ),
                 SliverToBoxAdapter(child: SizedBox(height: 10))
               ],
             )
