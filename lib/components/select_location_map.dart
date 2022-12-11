@@ -9,12 +9,12 @@ import 'package:gymfinder/utils/maps.dart';
 class SelectLocationMap extends StatefulWidget {
   final Address address;
   final Function(LatLng) setLocation;
-  const SelectLocationMap(this.address, this.setLocation);
+  const SelectLocationMap(this.address, this.setLocation, {super.key});
   @override
-  State<StatefulWidget> createState() => _SelectLocationMap();
+  State<StatefulWidget> createState() => _SelectLocationMapState();
 }
 
-class _SelectLocationMap extends State<SelectLocationMap> {
+class _SelectLocationMapState extends State<SelectLocationMap> {
   var position = CameraPosition(target: LatLng(41.04, 28.69), zoom: 14);
   late Future<LatLng> future;
   GoogleMapController? controller;
@@ -24,14 +24,6 @@ class _SelectLocationMap extends State<SelectLocationMap> {
   @override
   void initState() {
     super.initState();
-    var address =
-        "${widget.address.mahalle}/${widget.address.district}, ${widget.address.province}";
-    future = getLocationFromAdress(address);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
     var address =
         "${widget.address.mahalle}/${widget.address.district}, ${widget.address.province}";
     future = getLocationFromAdress(address);
@@ -68,12 +60,15 @@ class _SelectLocationMap extends State<SelectLocationMap> {
                 Positioned(
                   left: 0,
                   top: 0,
-                  child: Text("${location.latitude} ${location.longitude}"),
+                  child: Text(
+                      "${location.latitude.toStringAsFixed(3)} ${location.longitude.toStringAsFixed(3)}"),
                 )
               ],
             );
           }
-          return CircularProgressIndicator();
+          return Center(
+              child: SizedBox(
+                  height: 50, width: 50, child: CircularProgressIndicator()));
         });
   }
 }

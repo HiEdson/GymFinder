@@ -63,18 +63,22 @@ class _SelectLocationState extends State<SelectLocation> {
               selectedItem: address.mahalle,
               onChanged: (value) {
                 setState(() {
-                  address.mahalle = value!;
+                  address = address.copy(value!);
                 });
               },
             ),
             SizedBox(height: 10),
             Container(
                 height: 200,
-                child: SelectLocationMap(address, (LatLng loc) {
-                  setState(() {
-                    address.location = loc;
-                  });
-                }))
+                child: SelectLocationMap(
+                  address,
+                  (LatLng loc) {
+                    setState(() {
+                      address.location = loc;
+                    });
+                  },
+                  key: ValueKey(address.mahalle),
+                ))
           ],
         ));
   }

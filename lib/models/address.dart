@@ -11,4 +11,8 @@ class Address {
       this.district = "",
       this.mahalle = "",
       this.location = const LatLng(48, 24)]);
+
+  Address copy(String mahalle) {
+    return Address(province, district, mahalle, location);
+  }
 }

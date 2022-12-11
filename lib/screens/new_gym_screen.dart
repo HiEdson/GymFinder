@@ -90,7 +90,9 @@ class _NewGymScreenState extends State<NewGymScreen> {
                               color: Colors.white,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10))),
-                          child: Text(address.province),
+                          child: Text(address.province.length > 1
+                              ? "${address.mahalle}/${address.district}, ${address.province}"
+                              : ""),
                         ),
                       ),
                     ),
