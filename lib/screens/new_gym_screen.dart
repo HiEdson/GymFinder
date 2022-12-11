@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:gymfinder/components/add_images.dart';
 import 'package:gymfinder/components/add_materials.dart';
 import 'package:gymfinder/dialogs/select_location.dart';
+import 'package:gymfinder/utils/gym.dart';
 
 import '../components/dark_image.dart';
+import '../models/address.dart';
 
 class NewGymScreen extends StatefulWidget {
   @override
@@ -13,9 +16,9 @@ class NewGymScreen extends StatefulWidget {
 }
 
 class _NewGymScreenState extends State<NewGymScreen> {
-  var email = "";
-  var password = "";
-  var address = "";
+  var name = "";
+  List<String> materials = [];
+  var address = Address();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +65,7 @@ class _NewGymScreenState extends State<NewGymScreen> {
                             fillColor: Colors.white,
                             filled: true),
                         onChanged: (value) => setState(() {
-                          email = value;
+                          name = value;
                         }),
                       ),
                     ),
@@ -74,9 +77,9 @@ class _NewGymScreenState extends State<NewGymScreen> {
                           showDialog(
                               context: context,
                               builder: (context) => SelectLocation(
-                                      onAddressChange: (String value) {
+                                      onAddressChange: (Address address) {
                                     setState(() {
-                                      address = value;
+                                      this.address = address;
                                     });
                                   }));
                         },
@@ -87,30 +90,17 @@ class _NewGymScreenState extends State<NewGymScreen> {
                               color: Colors.white,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10))),
-                          child: Text(address),
+                          child: Text(address.province),
                         ),
                       ),
                     ),
                     Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            hintText: "Location",
-                            fillColor: Colors.white,
-                            filled: true),
-                        onChanged: (value) => setState(() {
-                          email = value;
-                        }),
-                      ),
+                      child: AddMaterials((List<String> mats) {
+                        materials = mats;
+                      }),
                     ),
-                    Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        child: AddMaterials()),
                     Container(
                       padding:
                           EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -134,7 +124,9 @@ class _NewGymScreenState extends State<NewGymScreen> {
                   child: Container(
                       alignment: Alignment.center,
                       child: ElevatedButton(
-                        onPressed: () => {},
+                        onPressed: () async {
+                          saveGym(name, materials, address, context);
+                        },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 30),

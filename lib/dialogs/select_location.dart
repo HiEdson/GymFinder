@@ -1,10 +1,12 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:gymfinder/components/select_location_map.dart';
+import 'package:gymfinder/models/address.dart';
 import 'package:gymfinder/utils/city.dart';
 
 class SelectLocation extends StatefulWidget {
-  final Function(String) onAddressChange;
+  final Function(Address) onAddressChange;
   const SelectLocation({required this.onAddressChange});
   @override
   State<StatefulWidget> createState() => _SelectLocationState();
@@ -12,9 +14,7 @@ class SelectLocation extends StatefulWidget {
 
 class _SelectLocationState extends State<SelectLocation> {
   final provinces = getProvinces();
-  var province = "";
-  var district = "";
-  var mahalle = "";
+  var address = Address();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class _SelectLocationState extends State<SelectLocation> {
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                widget.onAddressChange(province);
+                widget.onAddressChange(address);
               },
               child: Text("OK")),
         ],
@@ -38,37 +38,43 @@ class _SelectLocationState extends State<SelectLocation> {
             Text("Province"),
             DropdownSearch<String>(
               items: provinces,
-              selectedItem: province,
+              selectedItem: address.province,
               onChanged: (value) {
                 setState(() {
-                  province = value!;
+                  address.province = value!;
                 });
               },
             ),
             SizedBox(height: 10),
             Text("District"),
             DropdownSearch<String>(
-              items: getProvinceDistricts(province),
-              selectedItem: district,
+              items: getProvinceDistricts(address.province),
+              selectedItem: address.district,
               onChanged: (value) {
                 setState(() {
-                  district = value!;
+                  address.district = value!;
                 });
               },
             ),
             SizedBox(height: 10),
             Text("Mahalle"),
             DropdownSearch<String>(
-              items: getDistrictMahalle(province, district),
-              selectedItem: mahalle,
+              items: getDistrictMahalle(address.province, address.district),
+              selectedItem: address.mahalle,
               onChanged: (value) {
                 setState(() {
-                  mahalle = value!;
+                  address.mahalle = value!;
                 });
               },
             ),
             SizedBox(height: 10),
-            Container(height: 200, child: SelectLocationMap())
+            Container(
+                height: 200,
+                child: SelectLocationMap(address, (LatLng loc) {
+                  setState(() {
+                    address.location = loc;
+                  });
+                }))
           ],
         ));
   }
