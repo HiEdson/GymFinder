@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:gymfinder/components/add_images.dart';
 import 'package:gymfinder/components/add_materials.dart';
 import 'package:gymfinder/dialogs/select_location.dart';
@@ -17,6 +16,7 @@ class NewGymScreen extends StatefulWidget {
 
 class _NewGymScreenState extends State<NewGymScreen> {
   var name = "";
+  var price = 100;
   List<String> materials = [];
   var address = Address();
   bool saving = false;
@@ -69,6 +69,28 @@ class _NewGymScreenState extends State<NewGymScreen> {
                           name = value;
                         }),
                       ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      child: Row(children: [
+                        Expanded(child: Text("Price")),
+                        SizedBox(
+                            width: 50,
+                            child: TextField(
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  hintText: "Price",
+                                  fillColor: Colors.white,
+                                  filled: true),
+                              onChanged: (value) => setState(() {
+                                price = int.parse(value);
+                              }),
+                            )),
+                        Text("TRY/month", style: TextStyle(color: Colors.white))
+                      ]),
                     ),
                     Padding(
                       padding:
@@ -132,7 +154,8 @@ class _NewGymScreenState extends State<NewGymScreen> {
                             setState(() {
                               saving = true;
                             });
-                            await saveGym(name, materials, address, context);
+                            await saveGym(
+                                name, price, materials, address, context);
                             setState(() {
                               saving = false;
                             });

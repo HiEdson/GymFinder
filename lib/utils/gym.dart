@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:gymfinder/models/gym_save_model.dart';
 import 'package:provider/provider.dart';
@@ -7,8 +6,8 @@ import 'package:provider/provider.dart';
 import '../models/address.dart';
 
 final db = FirebaseFirestore.instance;
-Future<void> saveGym(String name, List<String> materials, Address address,
-    BuildContext context) async {
+Future<void> saveGym(String name, int price, List<String> materials,
+    Address address, BuildContext context) async {
   try {
     var images = Provider.of<NewGymModel>(context, listen: false)
         .images
@@ -17,6 +16,7 @@ Future<void> saveGym(String name, List<String> materials, Address address,
         .toList();
     var doc = {
       "name": name,
+      "price": price,
       "province": address.province,
       "district": address.district,
       "mahalle": address.mahalle,
