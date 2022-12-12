@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'components/gym_component.dart';
 import './single_gym.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+//Import firestore database
+import 'package:cloud_firestore/cloud_firestore.dart';
 class GymList extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -57,7 +59,29 @@ class MyCustomForm extends StatelessWidget {
       'Avcilar Gym Club5',
       'Avcilar Gym Club6'
     ];
+    final TextEditingController inputInfo = TextEditingController();
+    final Allgyms = FirebaseFirestore.instance.collection('users');
 
+  print('is it working');
+    FirebaseFirestore.instance
+        .collection('gyms')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+          print('..............done................');
+          print(querySnapshot.docs);
+      querySnapshot.docs.forEach((doc) {
+        print('--------------------------------------------------------');
+        print(doc["name"]);
+        print('--------------------------------------------------------');
+      });
+    });
+
+      @override
+    void dispose() {
+      // Clean up the controller when the widget is disposed.
+      inputInfo.dispose();
+      // super.dispose();
+    }
     return SingleChildScrollView(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,8 +93,9 @@ class MyCustomForm extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 16),
-                  child: Column(children: const <Widget>[
+                  child: Column(children: <Widget>[
                     TextField(
+                      controller: inputInfo,
                       decoration: InputDecoration(
                         icon: Icon(Icons.search),
                         border: OutlineInputBorder(
@@ -92,6 +117,8 @@ class MyCustomForm extends StatelessWidget {
 
                 //it will be mapped
                 //test the gest detect with the first element
+                //fetch from database
+                // FirebaseAnimatedList()
                 ...(gymList).map((g) {
                   //(gymList as List<String>)
                   return (GestureDetector(
@@ -102,19 +129,6 @@ class MyCustomForm extends StatelessWidget {
                     child: GymComp(g),
                   ));
                 }).toList(),
-                // GymComp('Avcilar Gym Club1'),
-                // GymComp('Avcilar Gym Club2'),
-                // GymComp('Avcilar Gym Club3'),
-                // GymComp('Avcilar Gym Club4'),
-                // GymComp('Avcilar Gym Club5'),
-                // GymComp('Avcilar Gym Club5'),
-                // GymComp('Avcilar Gym Club6'),
-                // GymComp('Avcilar Gym Club7'),
-                // GymComp('Avcilar Gym Club8'),
-                // GymComp('Avcilar Gym Club9'),
-                // GymComp('Avcilar Gym Club10'),
-                // GymComp('Avcilar Gym Club11'),
-                // GymComp('Avcilar Gym Club12')
               ],
             ))
       ],

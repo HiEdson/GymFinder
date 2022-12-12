@@ -4,8 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gymfinder/drawers/PrimaryDrawer.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-// AIzaSyCLv5PDaDRaLFOc6CZbHUcELRoIXPDQZSo
-
+import './secretKey.dart';
 class singleGym extends StatefulWidget {
   final String gymInfo;
   const singleGym(this.gymInfo);
@@ -22,7 +21,7 @@ class _singleGymState extends State<singleGym> {
   LatLng showLocation = LatLng(41.0070391276, 28.6817442045);
   LatLng showLocation2 = LatLng(40.9895, 28.7243);
   double newRating = 1;
-  String googleAPiKey = "AIzaSyCLv5PDaDRaLFOc6CZbHUcELRoIXPDQZSo";
+  String googleAPiKey = googleMapsKey; //from my local file containing this key
   //from here
   Set<Polyline> _polylines = {};
   List<LatLng> polylineCoordinates = [];
@@ -187,7 +186,7 @@ class _singleGymState extends State<singleGym> {
                   Padding(
                       padding: EdgeInsets.only(top: 25),
                       child: Text(
-                        "Rate this Gym $newRating $Allpoints",
+                        "Rate this Gym $newRating",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20.0,
