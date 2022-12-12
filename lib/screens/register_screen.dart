@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gymfinder/dialogs/dialog.dart';
 import 'package:gymfinder/utils/user.dart';
@@ -15,7 +16,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
   var email = "";
   var password = "";
   var name = "";
+  final auth = FirebaseAuth.instance;
+  String? emailError;
   bool registering = false;
+
+  Future<bool> registerUser() async {
+    try {
+      setState(() {
+        emailError = null;
+      });
+      var creds = await auth.createUserWithEmailAndPassword(
+          email: email.trim(), password: password.trim());
+      creds.user?.updateDisplayName(name.trim());
+      if (creds.user != null) return true;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "email-already-in-use") {
+        setState(() {
+          emailError = "Email in use";
+        });
+      }
+      print(e);
+      print(e.code);
+      return false;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,6 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 TextStyle(color: Colors.white, fontSize: 20)),
                         TextField(
                           decoration: InputDecoration(
+                              errorText: emailError,
                               border: OutlineInputBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10))),
@@ -105,14 +132,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: registering
                       ? null
                       : () async {
-                          addUser();
                           setState(() {
                             registering = true;
                           });
-                          Future.delayed(Duration(seconds: 3), () {
-                            setState(() {
-                              registering = false;
-                            });
+                          var result = await registerUser();
+                          setState(() {
+                            registering = false;
                           });
                         },
                   style: ElevatedButton.styleFrom(
