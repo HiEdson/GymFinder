@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'components/gym_component.dart';
 import './single_gym.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+//Import firestore database
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GymList extends StatefulWidget {
   @override
@@ -10,6 +14,49 @@ class GymList extends StatefulWidget {
 }
 
 class _GymListState extends State<GymList> {
+  var allGyms=[];
+  @override
+  void initState() {
+    var tempist = [];
+    FirebaseFirestore.instance
+        .collection('gyms')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      // print('..............done................');
+      // print(querySnapshot.docs);
+      querySnapshot.docs.forEach((doc) {
+        print('..............done................');
+        print(doc.data());
+        tempist.add(doc.data());
+        print('added');
+        print(tempist);
+      });
+      setState(() {
+        allGyms = List.from(tempist);
+      });
+      print('--------------------------------------------------------');
+      print(allGyms);
+      print('--------------------------------------------------------');
+    });
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    inputInfo.dispose();
+    super.dispose();
+  }
+
+  // var gymList = [
+  //   'Avcilar Gym Club1',
+  //   'Avcilar Gym Club2',
+  //   'Avcilar Gym Club3',
+  //   'Avcilar Gym Club4',
+  //   'Avcilar Gym Club5',
+  //   'Avcilar Gym Club6'
+  // ];
+  final TextEditingController inputInfo = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +76,8 @@ class _GymListState extends State<GymList> {
         body: Container(
           // resizeToAvoidBottomPadding: false
           padding: const EdgeInsets.only(),
-          decoration: BoxDecoration(
+          decoration: 
+          BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/images/background.jpeg"),
               fit: BoxFit.fill,
@@ -39,85 +87,59 @@ class _GymListState extends State<GymList> {
             width: MediaQuery.of(context).size.width * 1,
             // width: 1000.0,
             height: 1000.0,
-            child: MyCustomForm(),
+            child: SingleChildScrollView(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.centerLeft,
+                    width: 500,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 16),
+                          child: Column(children: <Widget>[
+                            TextField(
+                              controller: inputInfo,
+                              decoration: InputDecoration(
+                                icon: Icon(Icons.search),
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(45)),
+                                ),
+                                hintText: 'Try Avcilar, bench press, 100tl',
+                                filled: true,
+                                fillColor: Colors.white,
+                                // suffixIcon: Align(
+                                //   widthFactor: 1.0,
+                                //   heightFactor: 1.0,
+                                //   child: Icon(
+                                //   Icons.search,
+                                // ),)
+                              ),
+                            ),
+                          ]),
+                        ),
+                        ListView.builder(
+                          itemCount: allGyms.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            var currentItem = allGyms[index];
+                            return (GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => singleGym(currentItem)));
+                              },
+                              child: GymComp(currentItem),
+                            ));
+                          },
+                        ),
+                      ],
+                    ))
+              ],
+            )),
           ),
         ));
-  }
-}
-
-class MyCustomForm extends StatelessWidget {
-  const MyCustomForm({super.key});
-  @override
-  Widget build(BuildContext context) {
-    const gymList = [
-      'Avcilar Gym Club1',
-      'Avcilar Gym Club2',
-      'Avcilar Gym Club3',
-      'Avcilar Gym Club4',
-      'Avcilar Gym Club5',
-      'Avcilar Gym Club6'
-    ];
-
-    return SingleChildScrollView(
-        child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-            alignment: Alignment.centerLeft,
-            width: 500,
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 16),
-                  child: Column(children: const <Widget>[
-                    TextField(
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(45)),
-                        ),
-                        hintText: 'Try Avcilar, bench press, 100tl',
-                        filled: true,
-                        fillColor: Colors.white,
-                        // suffixIcon: Align(
-                        //   widthFactor: 1.0,
-                        //   heightFactor: 1.0,
-                        //   child: Icon(
-                        //   Icons.search,
-                        // ),)
-                      ),
-                    ),
-                  ]),
-                ),
-
-                //it will be mapped
-                //test the gest detect with the first element
-                ...(gymList).map((g) {
-                  //(gymList as List<String>)
-                  return (GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => singleGym(g)));
-                    },
-                    child: GymComp(g),
-                  ));
-                }).toList(),
-                // GymComp('Avcilar Gym Club1'),
-                // GymComp('Avcilar Gym Club2'),
-                // GymComp('Avcilar Gym Club3'),
-                // GymComp('Avcilar Gym Club4'),
-                // GymComp('Avcilar Gym Club5'),
-                // GymComp('Avcilar Gym Club5'),
-                // GymComp('Avcilar Gym Club6'),
-                // GymComp('Avcilar Gym Club7'),
-                // GymComp('Avcilar Gym Club8'),
-                // GymComp('Avcilar Gym Club9'),
-                // GymComp('Avcilar Gym Club10'),
-                // GymComp('Avcilar Gym Club11'),
-                // GymComp('Avcilar Gym Club12')
-              ],
-            ))
-      ],
-    ));
   }
 }
