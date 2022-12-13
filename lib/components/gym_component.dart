@@ -15,11 +15,11 @@ class GymComp extends StatelessWidget {
         child: Column(
           children: [
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.centerLeft, 
               child: Container(
                 // color: Colors.red,
                 child: Text(
-                  gymData,
+                  gymData["name"],
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28.0),
                 ),
               ),
@@ -33,11 +33,11 @@ class GymComp extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "1 km",
+                        "1 km away",
                         style: TextStyle(fontSize: 18.0),
                       ),
                       Text(
-                        "2000 tl",
+                        "${gymData["price"]} tl",
                         style: TextStyle(fontSize: 25.0),
                       ),
                     ],
