@@ -19,61 +19,64 @@ class _SelectLocationState extends State<SelectLocation> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-        actions: [
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Cancel")),
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                widget.onAddressChange(address);
-              },
-              child: Text("OK")),
-        ],
-        content: ListView(
-          children: [
-            DropdownSearch<String>(
-              items: provinces,
-              selectedItem: address.province,
-              dropdownDecoratorProps: DropDownDecoratorProps(
-                dropdownSearchDecoration:
-                    InputDecoration(labelText: "Province"),
+      actions: [
+        TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text("Cancel")),
+        TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onAddressChange(address);
+            },
+            child: Text("OK")),
+      ],
+      content: SizedBox(
+          width: double.maxFinite,
+          child: ListView(
+            children: [
+              DropdownSearch<String>(
+                items: provinces,
+                selectedItem: address.province,
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                  dropdownSearchDecoration:
+                      InputDecoration(labelText: "Province"),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    address.province = value!;
+                  });
+                },
               ),
-              onChanged: (value) {
-                setState(() {
-                  address.province = value!;
-                });
-              },
-            ),
-            DropdownSearch<String>(
-              items: getProvinceDistricts(address.province),
-              selectedItem: address.district,
-              dropdownDecoratorProps: DropDownDecoratorProps(
-                dropdownSearchDecoration:
-                    InputDecoration(labelText: "District"),
+              DropdownSearch<String>(
+                items: getProvinceDistricts(address.province),
+                selectedItem: address.district,
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                  dropdownSearchDecoration:
+                      InputDecoration(labelText: "District"),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    address.district = value!;
+                  });
+                },
               ),
-              onChanged: (value) {
-                setState(() {
-                  address.district = value!;
-                });
-              },
-            ),
-            DropdownSearch<String>(
-              items: getDistrictMahalle(address.province, address.district),
-              selectedItem: address.mahalle,
-              dropdownDecoratorProps: DropDownDecoratorProps(
-                dropdownSearchDecoration: InputDecoration(labelText: "Mahalle"),
+              DropdownSearch<String>(
+                items: getDistrictMahalle(address.province, address.district),
+                selectedItem: address.mahalle,
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                  dropdownSearchDecoration:
+                      InputDecoration(labelText: "Mahalle"),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    address = address.copy(value!);
+                  });
+                },
               ),
-              onChanged: (value) {
-                setState(() {
-                  address = address.copy(value!);
-                });
-              },
-            ),
-            SizedBox(height: 10),
-            Container(
+              SizedBox(height: 10),
+              Container(
                 height: 200,
                 child: SelectLocationMap(
                   address,
@@ -83,8 +86,10 @@ class _SelectLocationState extends State<SelectLocation> {
                     });
                   },
                   key: ValueKey(address.mahalle),
-                ))
-          ],
-        ));
+                ),
+              )
+            ],
+          )),
+    );
   }
 }
