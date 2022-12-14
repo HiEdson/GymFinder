@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:gymfinder/secretKey.dart';
 import 'package:gymfinder/utils/constants.dart';
 
 Future<LatLng> getLocationFromAdress(String address) async {
   try {
     var response = await Dio().get(
         "https://maps.googleapis.com/maps/api/geocode/json",
-        queryParameters: {"key": Constants.googleMapsKey, "address": address});
+        queryParameters: {"key": googleMapsKey, "address": address});
     var json = response.data;
     Map<String, dynamic> location = json["results"][0]["geometry"]["location"];
     double lat = location["lat"] ?? 41.04;

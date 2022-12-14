@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gymfinder/components/add_images.dart';
 import 'package:gymfinder/components/add_materials.dart';
 import 'package:gymfinder/dialogs/select_location.dart';
+import 'package:gymfinder/single_gym.dart';
 import 'package:gymfinder/utils/gym.dart';
 
 import '../components/dark_image.dart';
@@ -74,9 +75,12 @@ class _NewGymScreenState extends State<NewGymScreen> {
                       padding:
                           EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       child: Row(children: [
-                        Expanded(child: Text("Price")),
+                        Expanded(
+                            child: Text("Price",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18))),
                         SizedBox(
-                            width: 50,
+                            width: 100,
                             child: TextField(
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(
@@ -89,6 +93,7 @@ class _NewGymScreenState extends State<NewGymScreen> {
                                 price = int.parse(value);
                               }),
                             )),
+                        SizedBox(width: 20),
                         Text("TRY/month", style: TextStyle(color: Colors.white))
                       ]),
                     ),
@@ -115,7 +120,7 @@ class _NewGymScreenState extends State<NewGymScreen> {
                                   BorderRadius.all(Radius.circular(10))),
                           child: Text(address.province.length > 1
                               ? "${address.mahalle}/${address.district}, ${address.province}"
-                              : "Choose Loaction"),
+                              : "Choose Location"),
                         ),
                       ),
                     ),
@@ -154,11 +159,17 @@ class _NewGymScreenState extends State<NewGymScreen> {
                             setState(() {
                               saving = true;
                             });
-                            await saveGym(
+                            var doc = await saveGym(
                                 name, price, materials, address, context);
-                            setState(() {
-                              saving = false;
-                            });
+                            // if (ref == null) {
+                            //   setState(() {
+                            //     saving = false;
+                            //   });
+                            //   return;
+                            // }
+                            Navigator.of(context).pop();
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (ctx) => singleGym(doc)));
                           },
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.symmetric(
@@ -172,7 +183,12 @@ class _NewGymScreenState extends State<NewGymScreen> {
                   ),
                 if (saving)
                   SliverToBoxAdapter(
-                    child: SizedBox(child: CircularProgressIndicator()),
+                    child: Center(
+                      child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator()),
+                    ),
                   ),
                 SliverToBoxAdapter(child: SizedBox(height: 10))
               ],

@@ -32,35 +32,40 @@ class _SelectLocationState extends State<SelectLocation> {
               },
               child: Text("OK")),
         ],
-        title: Text("Choose Address"),
         content: ListView(
           children: [
-            Text("Province"),
             DropdownSearch<String>(
               items: provinces,
               selectedItem: address.province,
+              dropdownDecoratorProps: DropDownDecoratorProps(
+                dropdownSearchDecoration:
+                    InputDecoration(labelText: "Province"),
+              ),
               onChanged: (value) {
                 setState(() {
                   address.province = value!;
                 });
               },
             ),
-            SizedBox(height: 10),
-            Text("District"),
             DropdownSearch<String>(
               items: getProvinceDistricts(address.province),
               selectedItem: address.district,
+              dropdownDecoratorProps: DropDownDecoratorProps(
+                dropdownSearchDecoration:
+                    InputDecoration(labelText: "District"),
+              ),
               onChanged: (value) {
                 setState(() {
                   address.district = value!;
                 });
               },
             ),
-            SizedBox(height: 10),
-            Text("Mahalle"),
             DropdownSearch<String>(
               items: getDistrictMahalle(address.province, address.district),
               selectedItem: address.mahalle,
+              dropdownDecoratorProps: DropDownDecoratorProps(
+                dropdownSearchDecoration: InputDecoration(labelText: "Mahalle"),
+              ),
               onChanged: (value) {
                 setState(() {
                   address = address.copy(value!);
