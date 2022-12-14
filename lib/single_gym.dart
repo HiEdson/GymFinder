@@ -1,13 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'components/gym_component.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gymfinder/drawers/PrimaryDrawer.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-// AIzaSyCLv5PDaDRaLFOc6CZbHUcELRoIXPDQZSo
+import './secretKey.dart';
 
 class singleGym extends StatefulWidget {
-  final String gymInfo;
+  final gymInfo;
   const singleGym(this.gymInfo);
 
   @override
@@ -22,34 +23,38 @@ class _singleGymState extends State<singleGym> {
   LatLng showLocation = LatLng(41.0070391276, 28.6817442045);
   LatLng showLocation2 = LatLng(40.9895, 28.7243);
   double newRating = 1;
-  String googleAPiKey = "AIzaSyCLv5PDaDRaLFOc6CZbHUcELRoIXPDQZSo";
-  //from here
+  String googleAPiKey = googleMapsKey; //from my local file containing this key
   Set<Polyline> _polylines = {};
   List<LatLng> polylineCoordinates = [];
   PolylinePoints polylinePoints = PolylinePoints();
-  List<PointLatLng> Allpoints=[];
+  List<PointLatLng> Allpoints = [];
   Map<PolylineId, Polyline> polylines = {};
-  //to here
-  
+  var imgUrl = [];
 
-  void tryPoly()async{
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(googleAPiKey,
-         PointLatLng(showLocation.latitude, showLocation.longitude),
+  void tryPoly() async {
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        googleAPiKey,
+        PointLatLng(showLocation.latitude, showLocation.longitude),
         PointLatLng(showLocation2.latitude, showLocation2.longitude));
 
-        if (result.points.isNotEmpty) {
+    if (result.points.isNotEmpty) {
       result.points.forEach((PointLatLng point) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
     }
-        setState(() {
-        Allpoints = result.points;
+    setState(() {
+      Allpoints = result.points;
+
     });
-        // print(result.points);
+    // print(result.points);
   }
 
   @override
-  void initState(){
+  void initState() {
+    showLocation2 = LatLng(widget.gymInfo["location"]["latitude"],
+        widget.gymInfo["location"]["longitude"]);
+    imgUrl = widget.gymInfo["images"];
+
     markers.add(Marker(
       //add marker on google map
       markerId: MarkerId(showLocation.toString()),
@@ -61,6 +66,7 @@ class _singleGymState extends State<singleGym> {
       ),
       icon: BitmapDescriptor.defaultMarker, //Icon for Marker
     ));
+    //second marker, destination
     markers.add(Marker(
       //add marker on google map
       markerId: MarkerId(showLocation2.toString()),
@@ -72,26 +78,24 @@ class _singleGymState extends State<singleGym> {
       ),
       icon: BitmapDescriptor.defaultMarker, //Icon for Marker
     ));
-    //you can add more markers here
+
+    //set The destination location
     tryPoly();
+    // Defining an ID
+    PolylineId id = PolylineId('poly');
 
-     // Defining an ID
-  PolylineId id = PolylineId('poly');
-
-  // Initializing Polyline
-  Polyline polyline = Polyline(
-    polylineId: id,
-    color: Colors.red,
-    points: polylineCoordinates,
-    width: 3,
-  );
-
-  // Adding the polyline to the map
-  polylines[id] = polyline;
+    // Initializing Polyline
+    Polyline polyline = Polyline(
+      polylineId: id,
+      color: Colors.red,
+      points: polylineCoordinates,
+      width: 3,
+    );
+    // Adding the polyline to the map
+    polylines[id] = polyline;
+  print(imgUrl);
     super.initState();
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +131,7 @@ class _singleGymState extends State<singleGym> {
                 child: Padding(
                     padding: EdgeInsets.all(15),
                     child: Text(
-                      widget.gymInfo,
+                      widget.gymInfo["name"],
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 28.0,
@@ -136,19 +140,55 @@ class _singleGymState extends State<singleGym> {
                     )),
               ),
               Container(
-                  // padding: const EdgeInsets.only(),
-                  height: MediaQuery.of(context).size.height / 3,
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.only(left: 25.0, right: 25.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 7),
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                  ),
-                  child: FittedBox(
-                    fit: BoxFit.fill,
-                    alignment: Alignment.center,
-                    child: Image.asset('assets/images/background.jpeg'),
-                  )),
+                // padding: const EdgeInsets.only(),
+                height: MediaQuery.of(context).size.height / 3,
+                width: MediaQuery.of(context).size.width,
+                // margin: const EdgeInsets.only(left: 25.0, right: 25.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white, width: 7),
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    ...(imgUrl).map((img) {
+                        return Container(
+                          margin: const EdgeInsets.only(left: 10.0),
+                            // width: 550.0,
+                            color: Colors.red,
+                            child: CachedNetworkImage(
+                              placeholder: (context, url) =>
+                                  const CircularProgressIndicator(),
+                              imageUrl: 'https://picsum.photos/250?image=9',
+                            ));
+                        })
+                        
+                    // for (var string in ) TextSpan(text: string),
+                
+                    // ListView.builder(
+                    //   itemCount: 2,
+                    //   shrinkWrap: true,
+                    //   itemBuilder: (context, index) {
+                    //     // var currentItem = widget.gymInfo["images"][index];
+                    //     return Container(
+                    //         // width: 350.0,
+                    //         color: Colors.red,
+                    //         child: CachedNetworkImage(
+                    //           placeholder: (context, url) =>
+                    //               const CircularProgressIndicator(),
+                    //           imageUrl: 'https://picsum.photos/250?image=9',
+                    //         ));
+                    //   },
+                    // ),
+                  ],
+                ),
+
+                // FittedBox(
+                //   fit: BoxFit.fill,
+                //   alignment: Alignment.center,
+                //   child: Image.asset('assets/images/background.jpeg'),
+                // )
+              ),
               Container(
                   height: MediaQuery.of(context).size.height / 3,
                   width: MediaQuery.of(context).size.width,
@@ -164,30 +204,28 @@ class _singleGymState extends State<singleGym> {
                     // height: MediaQuery.of(context).size.height / 3,
                     // width: MediaQuery.of(context).size.width,
                     child: GoogleMap(
-                      zoomGesturesEnabled: true, //enable Zoom in, out on map
-                      initialCameraPosition: CameraPosition(
-                        target: showLocation, 
-                        zoom: 14.0, 
-                      ),
-                      markers: markers, //markers to show on map
-                      mapType: MapType.normal, //map type
-                      onMapCreated: (controller) {
-                        //method called when map is created
-                        setState(() {
-                          mapController = controller;
-                        });
-                      },
-                      polylines: Set<Polyline>.of(polylines.values)
-                    ),
-                  )
-                  ),
+                        zoomGesturesEnabled: true, //enable Zoom in, out on map
+                        initialCameraPosition: CameraPosition(
+                          target: showLocation,
+                          zoom: 14.0,
+                        ),
+                        markers: markers, //markers to show on map
+                        mapType: MapType.normal, //map type
+                        onMapCreated: (controller) {
+                          //method called when map is created
+                          setState(() {
+                            mapController = controller;
+                          });
+                        },
+                        polylines: Set<Polyline>.of(polylines.values)),
+                  )),
               Center(
                   child: Column(
                 children: [
                   Padding(
                       padding: EdgeInsets.only(top: 25),
                       child: Text(
-                        "Rate this Gym $newRating $Allpoints",
+                        "Rate this Gym $newRating",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20.0,
@@ -199,7 +237,7 @@ class _singleGymState extends State<singleGym> {
                     initialRating: 1,
                     minRating: 1,
                     direction: Axis.horizontal,
-                    allowHalfRating: true,
+                    // allowHalfRating: true,
                     itemCount: 5,
                     itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
                     itemBuilder: (context, _) => Icon(
