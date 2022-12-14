@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gymfinder/drawers/PrimaryDrawer.dart';
 import '../gym_list.dart';
+import 'new_gym_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -90,7 +91,12 @@ class _HomePageState extends State<HomePage> {
               height: 15.0,
             ),
             ElevatedButton(
-              onPressed: () => {},
+              onPressed: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NewGymScreen()),
+                )
+              },
               style: ElevatedButton.styleFrom(
                 textStyle: TextStyle(fontSize: 24),
                 minimumSize: Size(150, 35),
