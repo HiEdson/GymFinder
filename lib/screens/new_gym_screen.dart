@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:gymfinder/components/add_images.dart';
 import 'package:gymfinder/components/add_materials.dart';
 import 'package:gymfinder/dialogs/select_location.dart';
+import 'package:gymfinder/single_gym.dart';
+import 'package:gymfinder/utils/gym.dart';
 
 import '../components/dark_image.dart';
+import '../models/address.dart';
 
 class NewGymScreen extends StatefulWidget {
   @override
@@ -13,9 +16,11 @@ class NewGymScreen extends StatefulWidget {
 }
 
 class _NewGymScreenState extends State<NewGymScreen> {
-  var email = "";
-  var password = "";
-  var address = "";
+  var name = "";
+  var price = 100;
+  List<String> materials = [];
+  var address = Address();
+  bool saving = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,9 +67,35 @@ class _NewGymScreenState extends State<NewGymScreen> {
                             fillColor: Colors.white,
                             filled: true),
                         onChanged: (value) => setState(() {
-                          email = value;
+                          name = value;
                         }),
                       ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      child: Row(children: [
+                        Expanded(
+                            child: Text("Price",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18))),
+                        SizedBox(
+                            width: 100,
+                            child: TextField(
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  hintText: "Price",
+                                  fillColor: Colors.white,
+                                  filled: true),
+                              onChanged: (value) => setState(() {
+                                price = int.parse(value);
+                              }),
+                            )),
+                        SizedBox(width: 20),
+                        Text("TRY/month", style: TextStyle(color: Colors.white))
+                      ]),
                     ),
                     Padding(
                       padding:
@@ -74,9 +105,9 @@ class _NewGymScreenState extends State<NewGymScreen> {
                           showDialog(
                               context: context,
                               builder: (context) => SelectLocation(
-                                      onAddressChange: (String value) {
+                                      onAddressChange: (Address address) {
                                     setState(() {
-                                      address = value;
+                                      this.address = address;
                                     });
                                   }));
                         },
@@ -87,30 +118,19 @@ class _NewGymScreenState extends State<NewGymScreen> {
                               color: Colors.white,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10))),
-                          child: Text(address),
+                          child: Text(address.province.length > 1
+                              ? "${address.mahalle}/${address.district}, ${address.province}"
+                              : "Choose Location"),
                         ),
                       ),
                     ),
                     Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            hintText: "Location",
-                            fillColor: Colors.white,
-                            filled: true),
-                        onChanged: (value) => setState(() {
-                          email = value;
-                        }),
-                      ),
+                      child: AddMaterials((List<String> mats) {
+                        materials = mats;
+                      }),
                     ),
-                    Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        child: AddMaterials()),
                     Container(
                       padding:
                           EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -130,21 +150,46 @@ class _NewGymScreenState extends State<NewGymScreen> {
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   sliver: AddImages(),
                 ),
-                SliverToBoxAdapter(
-                  child: Container(
-                      alignment: Alignment.center,
-                      child: ElevatedButton(
-                        onPressed: () => {},
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 30),
-                          textStyle: TextStyle(fontSize: 24),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                        ),
-                        child: Text("Add"),
-                      )),
-                ),
+                if (!saving)
+                  SliverToBoxAdapter(
+                    child: Container(
+                        alignment: Alignment.center,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            setState(() {
+                              saving = true;
+                            });
+                            var doc = await saveGym(
+                                name, price, materials, address, context);
+                            // if (ref == null) {
+                            //   setState(() {
+                            //     saving = false;
+                            //   });
+                            //   return;
+                            // }
+                            Navigator.of(context).pop();
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (ctx) => singleGym(doc)));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 30),
+                            textStyle: TextStyle(fontSize: 24),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                          ),
+                          child: Text("Add"),
+                        )),
+                  ),
+                if (saving)
+                  SliverToBoxAdapter(
+                    child: Center(
+                      child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator()),
+                    ),
+                  ),
                 SliverToBoxAdapter(child: SizedBox(height: 10))
               ],
             )

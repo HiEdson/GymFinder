@@ -10,7 +10,8 @@ class NewGymModel extends ChangeNotifier {
   final Map<String, _Image> images = {};
 
   Future<void> addImage(String name, Uint8List bytes) async {
-    await uploadImage(name, bytes);
+    String url = await uploadImage(name, bytes);
+    images[name] = _Image(name, bytes, url);
   }
 
   void removeImage(String name) {
@@ -19,17 +20,19 @@ class NewGymModel extends ChangeNotifier {
 }
 
 final storageRef = FirebaseStorage.instance.ref();
-Future<void> uploadImage(String name, Uint8List bytes) async {
+Future<String> uploadImage(String name, Uint8List bytes) async {
   try {
     var doc = storageRef.child(name);
     var task = await doc.putData(bytes);
     var url = await doc.getDownloadURL();
     print("result");
     print(url);
+    return url;
   } catch (e) {
     print("error");
     print(e);
   }
+  return "";
 }
 
 class _Image {

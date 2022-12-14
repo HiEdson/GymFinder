@@ -3,6 +3,8 @@ import 'package:gymfinder/utils/db.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class AddMaterials extends StatefulWidget {
+  Function(List<String>) setMaterials;
+  AddMaterials(this.setMaterials);
   @override
   State<StatefulWidget> createState() => _AddMaterialsState();
 }
@@ -36,6 +38,7 @@ class _AddMaterialsState extends State<AddMaterials> {
             onPressed: () async {
               _getDropDown(context, materials, selectedMaterials, (values) {
                 selectedMaterials.clear();
+                widget.setMaterials(values);
                 setState(() {
                   selectedMaterials.addAll(values);
                 });
