@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gymfinder/drawers/PrimaryDrawer.dart';
+import 'package:gymfinder/screens/new_gym_screen.dart';
+import 'package:gymfinder/screens/search_results.dart';
 import '../gym_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -21,6 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  var search = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,22 +52,27 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: 15.0,
             ),
-            TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(45)),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: TextField(
+                onChanged: (value) {
+                  search = value;
+                },
+                decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                      color: Colors.black,
+                      icon: Icon(Icons.search),
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => SearchResults(search)));
+                      }),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(45)),
+                  ),
+                  hintText: 'Enter name',
+                  filled: true, //<-- SEE HERE
+                  fillColor: Colors.white,
                 ),
-                hintText: 'Try Avcilar, bench press, 100tl',
-                filled: true, //<-- SEE HERE
-                fillColor: Colors.white,
-                icon: Icon(Icons.search),
-
-                // suffixIcon: Align(
-                //   widthFactor: 1.0,
-                //   heightFactor: 1.0,
-                //   child: Icon(
-                //   Icons.search,
-                // ),)
               ),
             ),
             SizedBox(
@@ -90,7 +89,10 @@ class _HomePageState extends State<HomePage> {
               height: 15.0,
             ),
             ElevatedButton(
-              onPressed: () => {},
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (ctx) => NewGymScreen()));
+              },
               style: ElevatedButton.styleFrom(
                 textStyle: TextStyle(fontSize: 24),
                 minimumSize: Size(150, 35),
