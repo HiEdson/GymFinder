@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'components/gym_component.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -6,6 +7,10 @@ import 'package:gymfinder/drawers/PrimaryDrawer.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import './secretKey.dart';
+import 'package:percent_indicator/percent_indicator.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 
 class singleGym extends StatefulWidget {
   final gymInfo;
@@ -30,6 +35,9 @@ class _singleGymState extends State<singleGym> {
   List<PointLatLng> Allpoints = [];
   Map<PolylineId, Polyline> polylines = {};
   var imgUrl = [];
+  var currentScore;
+  var exist;
+  List displayRating = [0, 0, 0, 0, 0];
 
   void tryPoly() async {
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
@@ -44,9 +52,96 @@ class _singleGymState extends State<singleGym> {
     }
     setState(() {
       Allpoints = result.points;
-
     });
-    // print(result.points);
+  }
+
+  void checkExist(String docID) async {
+    try {
+      await FirebaseFirestore.instance.doc("rate/$docID").get().then((doc) {
+        if (doc.data() != null) {
+          // return true;
+          setState(() {
+            currentScore = doc.data();
+            exist = true;
+          });
+          getRatePercentage(currentScore);
+        } else {
+          // return false;
+          setState(() {
+            exist = false;
+          });
+        }
+      });
+    } catch (e) {
+      setState(() {
+        exist = false;
+      });
+    }
+    // return false;
+  }
+
+  void RateGym(x) {
+    // bool flag = checkExist(widget.gymInfo["id"]);
+    checkExist(widget.gymInfo["id"]);
+    if (exist == false) {
+      FirebaseFirestore.instance
+          .collection("rate")
+          .doc(widget.gymInfo["id"])
+          .set({
+        "one": x == 1 ? 1 : 0,
+        "two": x == 2 ? 1 : 0,
+        "three": x == 3 ? 1 : 0,
+        "four": x == 4 ? 1 : 0,
+        "five": x == 5 ? 1 : 0,
+        "gymId": widget.gymInfo["id"]
+      });
+    } else {
+      var field = x == 1
+          ? "one"
+          : x == 2
+              ? "two"
+              : x == 3
+                  ? "three"
+                  : x == 4
+                      ? "four"
+                      : "five";
+      FirebaseFirestore.instance
+          .collection('rate')
+          .doc(widget.gymInfo["id"])
+          .update({field: FieldValue.increment(1)});
+    }
+  }
+
+  void getRatePercentage(rateList) {
+    var rateRaw = [];
+    var rateInPercent = [];
+    int maxVal = 0;
+    rateList.forEach((k, v) {
+      rateRaw.add(v);
+    });
+    if (exist) {
+      rateRaw.removeAt(0);
+    }
+    print(rateRaw);
+    for (var i = 0; i < rateRaw.length; i++) {
+      if (rateRaw[i] > maxVal) {
+        maxVal = rateRaw[i];
+      }
+    }
+
+    for (var t = 0; t < rateRaw.length; t++) {
+      if (rateRaw[t] > 0) {
+        var x = (rateRaw[t] / maxVal).toStringAsFixed(2);
+        rateInPercent.add(double.parse(x));
+      } else {
+        rateInPercent.add(rateRaw[t]);
+      }
+    }
+    setState(() {
+      displayRating = rateInPercent;
+    });
+    print(maxVal);
+    print(displayRating);
   }
 
   @override
@@ -61,8 +156,8 @@ class _singleGymState extends State<singleGym> {
       position: showLocation, //position of marker
       infoWindow: InfoWindow(
         //popup info
-        title: 'My Custom Title ',
-        snippet: 'My Custom Subtitle',
+        title: 'My location',
+        snippet: '',
       ),
       icon: BitmapDescriptor.defaultMarker, //Icon for Marker
     ));
@@ -73,8 +168,8 @@ class _singleGymState extends State<singleGym> {
       position: showLocation2, //position of marker
       infoWindow: InfoWindow(
         //popup info
-        title: 'My Custom Title 2',
-        snippet: 'My Custom Subtitle 2',
+        title: 'Gyms location',
+        snippet: '',
       ),
       icon: BitmapDescriptor.defaultMarker, //Icon for Marker
     ));
@@ -93,7 +188,15 @@ class _singleGymState extends State<singleGym> {
     );
     // Adding the polyline to the map
     polylines[id] = polyline;
-  print(imgUrl);
+    var gymId = widget.gymInfo["id"];
+    checkExist(gymId);
+    //get the current Score
+
+    FirebaseFirestore.instance.doc("rate/$gymId").get().then((doc) {
+      setState(() {
+        currentScore = doc;
+      });
+    });
     super.initState();
   }
 
@@ -152,37 +255,18 @@ class _singleGymState extends State<singleGym> {
                   scrollDirection: Axis.horizontal,
                   children: <Widget>[
                     ...(imgUrl).map((img) {
-                        return Container(
+                      return Container(
                           margin: const EdgeInsets.only(left: 10.0),
-                            // width: 550.0,
-                            color: Colors.red,
-                            child: CachedNetworkImage(
-                              placeholder: (context, url) =>
-                                  const CircularProgressIndicator(),
-                              imageUrl: 'https://picsum.photos/250?image=9',
-                            ));
-                        })
-                        
-                    // for (var string in ) TextSpan(text: string),
-                
-                    // ListView.builder(
-                    //   itemCount: 2,
-                    //   shrinkWrap: true,
-                    //   itemBuilder: (context, index) {
-                    //     // var currentItem = widget.gymInfo["images"][index];
-                    //     return Container(
-                    //         // width: 350.0,
-                    //         color: Colors.red,
-                    //         child: CachedNetworkImage(
-                    //           placeholder: (context, url) =>
-                    //               const CircularProgressIndicator(),
-                    //           imageUrl: 'https://picsum.photos/250?image=9',
-                    //         ));
-                    //   },
-                    // ),
+                          // width: 550.0,
+                          color: Colors.black,
+                          child: CachedNetworkImage(
+                            placeholder: (context, url) =>
+                                const CircularProgressIndicator(),
+                            imageUrl: img,
+                          ));
+                    })
                   ],
                 ),
-
                 // FittedBox(
                 //   fit: BoxFit.fill,
                 //   alignment: Alignment.center,
@@ -225,11 +309,11 @@ class _singleGymState extends State<singleGym> {
                   Padding(
                       padding: EdgeInsets.only(top: 25),
                       child: Text(
-                        "Rate this Gym $newRating",
+                        "Rate this Gym",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20.0,
-                            color: Colors.black),
+                            color: Colors.white),
                         textAlign: TextAlign.center,
                       )),
                   // rating(),
@@ -246,11 +330,182 @@ class _singleGymState extends State<singleGym> {
                     ),
                     onRatingUpdate: (rating) {
                       setState(() {
-                        newRating = rating;
+                        RateGym(rating);
+                        // newRating = rating;
                       });
-                      //save the value to database
-                      // print(rating);
                     },
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 20.0, left: 10.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        LinearPercentIndicator(
+                          width: MediaQuery.of(context).size.width - 150,
+                          // width: 100.0,
+                          lineHeight: 8.0,
+                          percent: displayRating[4].toDouble(),
+                          progressColor: Colors.blue,
+                        )
+                      ],
+                    ),
+                  ),
+                  //4 stars
+                  Container(
+                    margin: const EdgeInsets.only(top: 20.0, left: 10.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 24.0),
+                          child: LinearPercentIndicator(
+                            width: MediaQuery.of(context).size.width - 150,
+                            lineHeight: 8.0,
+                            percent: displayRating[3].toDouble(),
+                            progressColor: Colors.blue,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  //3 star
+                  Container(
+                    margin: const EdgeInsets.only(top: 20.0, left: 10.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 47.0),
+                          child: LinearPercentIndicator(
+                            width: MediaQuery.of(context).size.width - 150,
+                            lineHeight: 8.0,
+                            percent: displayRating[2].toDouble(),
+                            progressColor: Colors.blue,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  //2 star
+                  Container(
+                    margin: const EdgeInsets.only(top: 20.0, left: 10.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 69.0),
+                          child: LinearPercentIndicator(
+                            width: MediaQuery.of(context).size.width - 150,
+                            lineHeight: 8.0,
+                            percent: displayRating[1].toDouble(),
+                            progressColor: Colors.blue,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  // 1 star
+                  Container(
+                    margin: const EdgeInsets.only(top: 20.0, left: 10.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 91.0),
+                          child: LinearPercentIndicator(
+                            width: MediaQuery.of(context).size.width - 150,
+                            lineHeight: 8.0,
+                            percent: displayRating[0].toDouble(),
+                            progressColor: Colors.blue,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ],
               ))
