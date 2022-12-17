@@ -22,23 +22,22 @@ class _GymListState extends State<GymList> {
         .collection('gyms')
         .get()
         .then((QuerySnapshot querySnapshot) {
-      // print('..............done................');
-      // print(querySnapshot.docs);
       querySnapshot.docs.forEach((doc) {
-        print('..............done................');
-        print(doc.data());
-        tempist.add(doc.data());
-        print('added');
-        print(tempist);
+        var data = doc.data()! as Map;
+        allGyms.add({...data, "id": doc.id});
+        // tempist.add(doc.data());
       });
-      setState(() {
-        allGyms = List.from(tempist);
-      });
-      print('--------------------------------------------------------');
-      print(allGyms);
-      print('--------------------------------------------------------');
+      // print(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;');
+      // print(allGyms);
+      // print(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;');
+
+      // setState(() {
+      //   // allGyms = List.from(tempist);
+      // });
     });
   }
+
+
 
   @override
   void dispose() {
@@ -47,14 +46,6 @@ class _GymListState extends State<GymList> {
     super.dispose();
   }
 
-  // var gymList = [
-  //   'Avcilar Gym Club1',
-  //   'Avcilar Gym Club2',
-  //   'Avcilar Gym Club3',
-  //   'Avcilar Gym Club4',
-  //   'Avcilar Gym Club5',
-  //   'Avcilar Gym Club6'
-  // ];
   final TextEditingController inputInfo = TextEditingController();
 
   @override
