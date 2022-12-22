@@ -28,6 +28,7 @@ Future<Map> saveGym(String name, int price, List<String> materials,
   };
   try {
     var ref = await db.collection("gyms").add(doc);
+    doc["id"] = ref.id;
     print("saved");
   } catch (e) {
     print("error");

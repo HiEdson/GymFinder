@@ -46,6 +46,8 @@ dependencies:
   firebase_auth: ^4.2.0
   firebase_storage: ^11.0.7
   percent_indicator: ^4.0.1
+  geolocator: ^9.0.2
+  synchronized: ^3.0.0+3
 
 dev_dependencies:
   flutter_test:

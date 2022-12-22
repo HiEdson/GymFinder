@@ -94,8 +94,13 @@ class _SearchResultsState extends State<SearchResults> {
           SliverPadding(
             padding: EdgeInsets.symmetric(horizontal: 10),
             sliver: SliverList(
-              delegate: SliverChildListDelegate(
-                  [for (var gym in filteredGyms) GymComp(gym)]),
+              delegate: SliverChildListDelegate([
+                for (var gym in filteredGyms)
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: GymComp(gym, key: ValueKey(gym["id"])),
+                  )
+              ]),
             ),
           )
         ],
