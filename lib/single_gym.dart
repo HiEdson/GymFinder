@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:gymfinder/components/dark_image.dart';
+import 'package:gymfinder/utils/maps.dart';
 import 'components/gym_component.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gymfinder/drawers/PrimaryDrawer.dart';
@@ -24,36 +26,18 @@ class singleGym extends StatefulWidget {
 
 class _singleGymState extends State<singleGym> {
   GoogleMapController? mapController; //contrller for Google map
-  Set<Marker> markers = Set(); //markers for google map
-  LatLng showLocation = LatLng(41.0070391276, 28.6817442045);
-  LatLng showLocation2 = LatLng(40.9895, 28.7243);
+  Set<Marker> markers = {}; //markers for google map
+  final initialPosition = CameraPosition(
+    target: LatLng(41.0070391276, 28.6817442045),
+    zoom: 14,
+  );
   double newRating = 1;
   String googleAPiKey = googleMapsKey; //from my local file containing this key
-  Set<Polyline> _polylines = {};
-  List<LatLng> polylineCoordinates = [];
-  PolylinePoints polylinePoints = PolylinePoints();
-  List<PointLatLng> Allpoints = [];
   Map<PolylineId, Polyline> polylines = {};
   var imgUrl = [];
   var currentScore;
   var exist;
   List displayRating = [0, 0, 0, 0, 0];
-
-  void tryPoly() async {
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        googleAPiKey,
-        PointLatLng(showLocation.latitude, showLocation.longitude),
-        PointLatLng(showLocation2.latitude, showLocation2.longitude));
-
-    if (result.points.isNotEmpty) {
-      result.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
-    }
-    setState(() {
-      Allpoints = result.points;
-    });
-  }
 
   void checkExist(String docID) async {
     try {
@@ -144,52 +128,58 @@ class _singleGymState extends State<singleGym> {
     print(displayRating);
   }
 
-  @override
-  void initState() {
-    showLocation2 = LatLng(widget.gymInfo["location"]["latitude"],
-        widget.gymInfo["location"]["longitude"]);
-    imgUrl = widget.gymInfo["images"];
+  calculateDistances() async {
+    var position = await getCurrentLocation();
+    if (position == null) return;
+    var src = LatLng(position.latitude, position.longitude);
+    var dst = LatLng(widget.gymInfo["location"]["latitude"],
+        widget.gymInfo["location"]["latitude"]);
+    markers.add(Marker(
+        markerId: MarkerId(position.toString()),
+        position: src,
+        icon:
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen)));
 
     markers.add(Marker(
-      //add marker on google map
-      markerId: MarkerId(showLocation.toString()),
-      position: showLocation, //position of marker
-      infoWindow: InfoWindow(
-        //popup info
-        title: 'My location',
-        snippet: '',
-      ),
-      icon: BitmapDescriptor.defaultMarker, //Icon for Marker
-    ));
-    //second marker, destination
-    markers.add(Marker(
-      //add marker on google map
-      markerId: MarkerId(showLocation2.toString()),
-      position: showLocation2, //position of marker
-      infoWindow: InfoWindow(
-        //popup info
-        title: 'Gyms location',
-        snippet: '',
-      ),
-      icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+      markerId: MarkerId(widget.gymInfo["id"]),
+      position: dst,
+      icon: BitmapDescriptor.defaultMarker,
     ));
 
-    //set The destination location
-    tryPoly();
-    // Defining an ID
-    PolylineId id = PolylineId('poly');
+    var polylinePoints = PolylinePoints();
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        googleAPiKey,
+        PointLatLng(src.latitude, src.longitude),
+        PointLatLng(dst.latitude, dst.longitude));
 
-    // Initializing Polyline
+    List<LatLng> polylineCoordinates = [];
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    }
     Polyline polyline = Polyline(
-      polylineId: id,
+      polylineId: PolylineId(widget.gymInfo["id"]),
       color: Colors.red,
       points: polylineCoordinates,
       width: 3,
     );
     // Adding the polyline to the map
-    polylines[id] = polyline;
+    polylines[polyline.mapsId] = polyline;
+    setState(() {
+      polylines = polylines;
+      markers = markers;
+    });
+    mapController?.animateCamera(CameraUpdate.newLatLngZoom(src, 8));
+    // mapController?.animateCamera(CameraUpdate.zoomTo(zoom + 1));
+  }
+
+  @override
+  void initState() {
+    imgUrl = widget.gymInfo["images"];
     var gymId = widget.gymInfo["id"];
     checkExist(gymId);
+    calculateDistances();
     //get the current Score
 
     FirebaseFirestore.instance.doc("rate/$gymId").get().then((doc) {
@@ -216,301 +206,143 @@ class _singleGymState extends State<singleGym> {
           //   size: 55.0,
           // ),
         ),
-        body: Container(
-          constraints: BoxConstraints.expand(),
-          padding: const EdgeInsets.only(),
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/images/background.jpeg"),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: SingleChildScrollView(
-              child: Column(
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 1,
-                // height: 1000.0,
-                child: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Text(
-                      widget.gymInfo["name"],
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 28.0,
-                          color: Colors.white),
-                      textAlign: TextAlign.center,
-                    )),
-              ),
-              Container(
-                // padding: const EdgeInsets.only(),
-                height: MediaQuery.of(context).size.height / 3,
+        body: Stack(
+          children: [
+            DarkImage(
+              alpha: 80,
+              child: Container(
+                height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-                // margin: const EdgeInsets.only(left: 25.0, right: 25.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white, width: 7),
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assets/images/background.jpeg"),
+                      fit: BoxFit.cover),
                 ),
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    ...(imgUrl).map((img) {
-                      return Container(
-                          margin: const EdgeInsets.only(left: 10.0),
-                          // width: 550.0,
-                          color: Colors.black,
-                          child: CachedNetworkImage(
-                            placeholder: (context, url) =>
-                                const CircularProgressIndicator(),
-                            imageUrl: img,
-                          ));
-                    })
-                  ],
-                ),
-                // FittedBox(
-                //   fit: BoxFit.fill,
-                //   alignment: Alignment.center,
-                //   child: Image.asset('assets/images/background.jpeg'),
-                // )
               ),
-              Container(
-                  height: MediaQuery.of(context).size.height / 3,
-                  width: MediaQuery.of(context).size.width,
-                  // padding: const EdgeInsets.only(),
-                  margin:
-                      const EdgeInsets.only(left: 25.0, right: 25.0, top: 40.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 7),
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
+            ),
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 1,
+                    // height: 1000.0,
+                    child: Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Text(
+                          widget.gymInfo["name"],
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 28.0,
+                              color: Colors.white),
+                          textAlign: TextAlign.center,
+                        )),
                   ),
-                  child: Container(
-                    // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    // height: MediaQuery.of(context).size.height / 3,
-                    // width: MediaQuery.of(context).size.width,
-                    child: GoogleMap(
-                        zoomGesturesEnabled: true, //enable Zoom in, out on map
-                        initialCameraPosition: CameraPosition(
-                          target: showLocation,
-                          zoom: 14.0,
+                  Container(
+                    height: MediaQuery.of(context).size.height / 3,
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white, width: 7),
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    ),
+                    child: PageView(
+                      scrollDirection: Axis.horizontal,
+                      children: <Widget>[
+                        ...(imgUrl).map((img) {
+                          return Container(
+                              // width: 550.0,
+                              padding: EdgeInsets.all(20),
+                              color: Colors.black.withOpacity(0),
+                              child: CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                                imageUrl: img,
+                              ));
+                        })
+                      ],
+                    ),
+                  ),
+                  Container(
+                      height: MediaQuery.of(context).size.height / 3,
+                      width: MediaQuery.of(context).size.width,
+                      margin: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white, width: 7),
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      child: Container(
+                        child: GoogleMap(
+                            zoomGesturesEnabled:
+                                true, //enable Zoom in, out on map
+                            initialCameraPosition: initialPosition,
+                            markers: markers, //markers to show on map
+                            mapType: MapType.normal, //map type
+                            onMapCreated: (controller) {
+                              mapController = controller;
+                            },
+                            polylines: Set<Polyline>.of(polylines.values)),
+                      )),
+                  Center(
+                      child: Column(
+                    children: [
+                      Padding(
+                          padding: EdgeInsets.only(top: 25),
+                          child: Text(
+                            "Rate this Gym",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20.0,
+                                color: Colors.white),
+                            textAlign: TextAlign.center,
+                          )),
+                      // rating(),
+                      RatingBar.builder(
+                        initialRating: 1,
+                        minRating: 1,
+                        direction: Axis.horizontal,
+                        // allowHalfRating: true,
+                        itemCount: 5,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
                         ),
-                        markers: markers, //markers to show on map
-                        mapType: MapType.normal, //map type
-                        onMapCreated: (controller) {
-                          //method called when map is created
+                        onRatingUpdate: (rating) {
                           setState(() {
-                            mapController = controller;
+                            RateGym(rating);
+                            // newRating = rating;
                           });
                         },
-                        polylines: Set<Polyline>.of(polylines.values)),
-                  )),
-              Center(
-                  child: Column(
-                children: [
-                  Padding(
-                      padding: EdgeInsets.only(top: 25),
-                      child: Text(
-                        "Rate this Gym",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20.0,
-                            color: Colors.white),
-                        textAlign: TextAlign.center,
-                      )),
-                  // rating(),
-                  RatingBar.builder(
-                    initialRating: 1,
-                    minRating: 1,
-                    direction: Axis.horizontal,
-                    // allowHalfRating: true,
-                    itemCount: 5,
-                    itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                    itemBuilder: (context, _) => Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                    ),
-                    onRatingUpdate: (rating) {
-                      setState(() {
-                        RateGym(rating);
-                        // newRating = rating;
-                      });
-                    },
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(top: 20.0, left: 10.0),
-                    child: Row(
-                      children: [
+                      ),
+                      for (var row = 5; row > 0; --row)
                         Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
+                          margin: const EdgeInsets.only(top: 20.0, left: 10.0),
+                          child: Row(
+                            children: [
+                              for (var i = 0; i < row; ++i)
+                                Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                ),
+                              Spacer(),
+                              LinearPercentIndicator(
+                                width: MediaQuery.of(context).size.width - 150,
+                                // width: 100.0,
+                                lineHeight: 8.0,
+                                percent: displayRating[row - 1].toDouble(),
+                                progressColor: Colors.blue,
+                              ),
+                            ],
                           ),
                         ),
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        LinearPercentIndicator(
-                          width: MediaQuery.of(context).size.width - 150,
-                          // width: 100.0,
-                          lineHeight: 8.0,
-                          percent: displayRating[4].toDouble(),
-                          progressColor: Colors.blue,
-                        )
-                      ],
-                    ),
-                  ),
-                  //4 stars
-                  Container(
-                    margin: const EdgeInsets.only(top: 20.0, left: 10.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(left: 24.0),
-                          child: LinearPercentIndicator(
-                            width: MediaQuery.of(context).size.width - 150,
-                            lineHeight: 8.0,
-                            percent: displayRating[3].toDouble(),
-                            progressColor: Colors.blue,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  //3 star
-                  Container(
-                    margin: const EdgeInsets.only(top: 20.0, left: 10.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(left: 47.0),
-                          child: LinearPercentIndicator(
-                            width: MediaQuery.of(context).size.width - 150,
-                            lineHeight: 8.0,
-                            percent: displayRating[2].toDouble(),
-                            progressColor: Colors.blue,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  //2 star
-                  Container(
-                    margin: const EdgeInsets.only(top: 20.0, left: 10.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(left: 69.0),
-                          child: LinearPercentIndicator(
-                            width: MediaQuery.of(context).size.width - 150,
-                            lineHeight: 8.0,
-                            percent: displayRating[1].toDouble(),
-                            progressColor: Colors.blue,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  // 1 star
-                  Container(
-                    margin: const EdgeInsets.only(top: 20.0, left: 10.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(left: 91.0),
-                          child: LinearPercentIndicator(
-                            width: MediaQuery.of(context).size.width - 150,
-                            lineHeight: 8.0,
-                            percent: displayRating[0].toDouble(),
-                            progressColor: Colors.blue,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
+                    ],
+                  ))
                 ],
-              ))
-            ],
-          )),
+              ),
+            ),
+          ],
         ));
   }
 }

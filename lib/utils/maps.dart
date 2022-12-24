@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:gymfinder/secretKey.dart';
 import 'package:gymfinder/utils/constants.dart';
@@ -21,4 +22,20 @@ Future<LatLng> getLocationFromAdress(String address) async {
     print(e);
   }
   return LatLng(41.04, 28.69);
+}
+
+Future<Position?> getCurrentLocation() async {
+  var service = await Geolocator.isLocationServiceEnabled();
+  if (!service) return null;
+  var permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+  }
+  try {
+    return await Geolocator.getCurrentPosition();
+  } catch (e) {
+    print("error getting location");
+    print(e);
+  }
+  return null;
 }
